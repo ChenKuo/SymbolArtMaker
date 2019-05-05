@@ -80,7 +80,7 @@ body {
 #app {
     display: inline-grid;
     grid-template-columns: 200px 1fr 200px;
-    grid-template-rows: 50px 50px 1fr 20px;
+    grid-template-rows: 40px 40px 1fr 20px;
     grid-template-areas:
         'h h h'
         't t t'
