@@ -1,12 +1,17 @@
 <template>
     <div class="cs_editor">
-        Color Shape Editor
+        <ColorEditor/>
     </div>
 </template>
 
 <script>
+import ColorEditor from './colorEditor/ColorEditor.vue'
+
 export default {
     name: 'ColorShapeEditor',
+    components: {
+        ColorEditor
+    }
 }
 </script>
 
