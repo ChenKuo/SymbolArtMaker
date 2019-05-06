@@ -1,7 +1,7 @@
 <template>
     <div class="toolbar">
         <div class="edit_buttons">
-            <img src="./../assets/add.svg">
+            <img v-on:click="addLayer()" src="./../assets/add.svg">
             <img src="./../assets/group.svg">
             <img src="./../assets/undo.svg">
             <img src="./../assets/redo.svg">
@@ -26,6 +26,11 @@
 <script>
 export default {
     name: 'ToolBar',
+    methods: {
+        addLayer: function(){
+            this.$store.commit('addLayer')
+        }
+    }
 }
 </script>
 
