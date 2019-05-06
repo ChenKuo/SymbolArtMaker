@@ -13,7 +13,7 @@ export default {
     },
     computed: {
         children: function(){
-            return this.$store.state.treedata
+            return this.$store.state.treeData
         }
     },
     methods: {

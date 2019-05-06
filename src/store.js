@@ -31,8 +31,8 @@ const newLayer = () => {
 //state of a symbol art
 const state = {
     layers: {}, //all layers
-    layerlist: [], //all layers' id in order
-    treedata: [], //tree structure of layers and groups
+    layerList: [], //all layers' id in order
+    treeData: [], //tree structure of layers and groups
     selected: [], //selected layers and groups
     nodes: {},
 }
@@ -42,8 +42,8 @@ const mutations = {
         let id = ID()
         let layer = newLayer()
         Vue.set(state.layers, id, layer)
-        state.layerlist.splice(0, 0, id)
-        state.treedata.splice(0, 0, id)
+        state.layerList.splice(0, 0, id)
+        state.treeData.splice(0, 0, id)
         Vue.set(state.nodes, id, { name: 'Layer ' + id, selected: false })
     },
     select(state, id) {
