@@ -46,6 +46,7 @@ const DFT = (index, children, callback) => {
     return index
 }
 
+
 //state of a symbol art
 const state = {
     parts: {}, //all layers
@@ -56,6 +57,7 @@ const state = {
     requestUpdateVerticesLayers: [],
     requestUpdateTypeLayers: [],
     numberOfLayers: 0,
+    symbolImages: null,
 }
 
 const mutations = {
@@ -102,6 +104,9 @@ const mutations = {
     },
     clearUpdateTypeRequest(state){
         state.requestUpdateTypeLayers = []
+    },
+    setSymbolImages(state, { imageList }) {
+        state.symbolImages = imageList
     }
 }
 

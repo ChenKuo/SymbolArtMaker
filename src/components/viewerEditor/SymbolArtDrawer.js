@@ -1,8 +1,10 @@
-import vs from '../shader/vertex.glsl'
-import fs from '../shader/fragment.glsl'
-import texImage from '../assets/symbols.png'
+import sa_vs from './shader/sa_drawer.vs'
+import sa_fs from './shader/sa_drawer.fs'
+import post_vs from './shader/postprocessing.vs'
+import post_fs from './shader/postprocessing.'
+import texImage from '../../assets/symbols.png'
 
-let textureImage
+let textureImage = new Image()
 
 let gl = undefined
 let shaderProgram = {
@@ -32,7 +34,6 @@ const initWebgl = canvas => {
         //gl.depthFunc(gl.LEQUAL);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
     }
-    textureImage = new Image()
     textureImage.src = texImage
     textureImage.onload = initBuffers
 }
