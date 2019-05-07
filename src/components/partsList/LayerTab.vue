@@ -10,13 +10,13 @@ export default {
     props: {id:{type:Number, required:true}},
     computed:{
         selected: function(){
-            return this.$store.state.nodes[this.id].selected
+            return this.part.selected
         },
         part: function(){
-            return this.$store.state.layers[this.id]
+            return this.$store.state.parts[this.id]
         },
         name: function(){
-            return this.$store.state.nodes[this.id].name
+            return this.part.name
         },
         imageStyle: function(){
             let p = this.part

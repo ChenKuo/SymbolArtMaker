@@ -16,7 +16,7 @@ let shaderProgram = {
         texChannels: null,
     },
 }
-let ortho = null
+
 let buffers = {}
 let lenSymbols = 0
 
@@ -115,35 +115,6 @@ const initBuffers = () => {
     )
     gl.bindTexture(gl.TEXTURE_2D, null)
 }
-const makeOrtho = (left, right, bottom, top, znear, zfar) => {
-    var tx = -(right + left) / (right - left)
-    var ty = -(top + bottom) / (top - bottom)
-    var tz = -(zfar + znear) / (zfar - znear)
-
-    /*return [2 / (right - left), 0, 0, tx,
-             0, 2 / (top - bottom), 0, ty,
-             0, 0, -2 / (zfar - znear), tz,
-             0, 0, 0, 1];*/
-
-    return [
-        2 / (right - left),
-        0,
-        0,
-        0,
-        0,
-        2 / (top - bottom),
-        0,
-        0,
-        0,
-        0,
-        -2 / (zfar - znear),
-        0,
-        tx,
-        ty,
-        tz,
-        1,
-    ]
-}
 
 const webgl = {
     init(canvas) {
@@ -164,9 +135,8 @@ const webgl = {
         )
     },
     changeCanvasSize(w, h) {
-        ortho = new Float32Array(
-            makeOrtho(-w / 2, w / 2, -h / 2, h / 2, -256, 256)
-        )
+        //TODO: implement
+        w=h
         return this
     },
     updateSymbols(symbols) {

@@ -43,10 +43,12 @@ export default {
     computed: {
         id: function(){
             let selected = this.$store.state.selected
-            return selected.length === 1? selected[0]:null
+            if(selected.length === 1 && !selected[0].children)
+                return selected[0]
+            return null
         },
         layer: function(){
-            return this.$store.state.layers[this.id]
+            return this.$store.state.parts[this.id]
         },
         colorCode: function(){
             let l=this.layer

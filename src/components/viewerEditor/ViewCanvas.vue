@@ -3,61 +3,99 @@
 </template>
 
 <script>
-import webgl from '../js/webgl.js'
+//import webgl from '../js/webgl.js'
 
 export default {
-    name: ViewCanvas,
+    name: 'ViewCanvas',
     mounted(){
-        webgl.init(this.$el);
-        webgl.changeCanvasSize(512,256);
+        //webgl.init(this.$el);
     },
     data(){
         return{
-            vertices: new Int8Array(225*8),
-            colors: new Uint8Array(225*16),
-            types: new Uint16Array(225*4)
+            readyToRender: true,      
+            vertices: new Uint8Array(225 * 8),
+            colors: new Uint8Array(225 * 16),
+            types: new Uint16Array(225 * 4),
+
         }
     },
     computed: {
-        layerList(){
-            return this.$store.state.layerList;
+        rebuild(){
+            return this.$store.state.requestRebuildList
         },
-        selectedPart(){
-            let selected=this.$store.state.selected;
-            if(selected==null)return{};
-            return this.$store.state.parts[selected];
+        updateColor(){
+            return this.$store.state.requestUpdateColorLayers
         },
-        selectedIndex(){
-            return this.layerList.indexOf(this.$store.state.selected);
+        updateVertices(){
+            return this.$store.state.requestUpdateVerticesLayers
         },
-        selectedVertices(){
-            let {ltx,lty,lbx,lby,rtx,rty,rbx,rby}=this.selectedPart;
-            return {ltx,lty,lbx,lby,rtx,rty,rbx,rby};
-        },
-        selectedColor(){
-            let {r,g,b,a}=this.selectedPart;
-            return {r,g,b,a};
-        },
-        selectedType(){
-            return this.selectedPart.type;
+        updateType(){
+            return this.$store.state.requestUpdateTypeLayers
         }
     },
     watch: {
-        layerList(list){
-            let symbols=list.map(id=>this.$store.state.layers[id]);
-            webgl.updateSymbols(symbols).draw();
+        rebuild(requested){
+            if(this.readyToRender && requested) {
+                requestAnimationFrame(this.rebuildListandRender)
+            }
+            this.readyToRender = false
         },
-        selectedVertices(vertices){
-            webgl.updateVertices(this.selectedIndex,vertices).draw();
+        updateColor(layers){
+            if(this.readyToRender && layers.length){
+                requestAnimationFrame(this.updateColorandRender)
+            }
+            this.readyToRender = false
         },
-        selectedColor(color){
-            webgl.updateColor(this.selectedIndex, color).draw();
+        updateVertices(layers){
+            if(this.readyToRender && layers.length){
+                requestAnimationFrame(this.updateVerticesandRender)
+            }
+            this.readyToRender = false
         },
-        selectedType(type){
-            webgl.updateType(this.selectedIndex,type).draw();
+        updateType(layers){
+            if(this.readyToRender && layers.length) {
+                requestAnimationFrame(this.updateTypeandRender)
+            }
+            this.readyToRender = false
+        }
+
+    },
+    methods: {
+        rebuildListandRender(){
+            const updateArrays = (layerId, index) => {
+                this.vertices.set(
+                    [l.lbx, l.lby, l.ltx, l.lty, l.rbx, l.rby, l.rtx, l.rty],
+                    index * 8
+                )
+                this.colors.set(
+                    // eslint-disable-next-line prettier/prettier
+                    [l.r, l.g, l.b, l.a, l.r, l.g, l.b, l.a, l.r, l.g, l.b, l.a, l.r, l.g, l.b, l.a],
+                    index * 16
+                )
+                this.types.set(
+                    [l.type, l.type, l.type, l.type],
+                    index * 4
+                )
+            }
+            DFT(0, this.$state.treeData, updateArrays)
+            this.render()
+            this.$store.commit(clearRebuildListRequest)
+        },
+        updateColorandRender(){
+            let layers = this.$store.requestUpdateColorLayers
+            for(let i = 0; i<layers.length; i++) {
+                layers[i] //wut's the index...
+            }
+        },
+
+
+        render(){
+
         }
     }
 }
+
+
 </script>
 
 <style>

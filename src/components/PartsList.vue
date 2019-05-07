@@ -13,7 +13,7 @@ export default {
     },
     computed: {
         children: function(){
-            return this.$store.state.treeData
+            return this.$store.state.treeData.map(x=>x.id)
         }
     },
     methods: {

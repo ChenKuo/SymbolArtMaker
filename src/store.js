@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import union from 'lodash/union'
 
 Vue.use(Vuex)
 
@@ -9,7 +10,7 @@ const ID = (() => {
     return () => id++
 })()
 
-const newLayer = () => {
+const newLayer = (name = 'unnamed layer') => {
     return {
         visibility: true,
         type: 0,
@@ -25,40 +26,82 @@ const newLayer = () => {
         rty: -16,
         rbx: 16,
         rby: 16,
+        name: name,
+        selected: false,
+        index: null,
     }
+}
+
+//depth-first traversal with callback(node,index) on leaf nodes
+const DFT = (index, children, callback) => {
+    for (let i = 0; i < children.length; i++) {
+        let child = children[i]
+        if (child.children) {
+            index = DFT(child.children, callback)
+        } else {
+            callback(child.id, index)
+            index++
+        }
+    }
+    return index
 }
 
 //state of a symbol art
 const state = {
-    layers: {}, //all layers
-    layerList: [], //all layers' id in order
+    parts: {}, //all layers
     treeData: [], //tree structure of layers and groups
     selected: [], //selected layers and groups
-    nodes: {},
+    requestRebuildList: null,
+    requestUpdateColorLayers: [],
+    requestUpdateVerticesLayers: [],
+    requestUpdateTypeLayers: [],
+    numberOfLayers: 0,
 }
 
 const mutations = {
     addLayer(state) {
         let id = ID()
-        let layer = newLayer()
-        Vue.set(state.layers, id, layer)
-        state.layerList.splice(0, 0, id)
-        state.treeData.splice(0, 0, id)
-        Vue.set(state.nodes, id, { name: 'Layer ' + id, selected: false })
+        let l = newLayer('Layer ' + id)
+        Vue.set(state.parts, id, l)
+        state.treeData.splice(0, 0, { id })
+        state.numberOfLayers++
+        let list = []
+        list.length = state.numberOfLayers
+        const updateList = (id, index) => {
+            list[index] = id
+            state.parts[id].index = index
+        }
+        DFT(0, state.treeData, updateList)
+        state.requestRebuildList = true
     },
     select(state, id) {
         for (let i = 0; i < state.selected.length; i++) {
-            state.nodes[state.selected[i]].selected = false
+            state.parts[state.selected[i]].selected = false
         }
         state.selected = [id]
-        state.nodes[id].selected = true
+        state.parts[id].selected = true
     },
     editLayerColor(state, { id, color }) {
-        let layer = state.layers[id]
+        let layer = state.parts[id]
         layer.r = color.r
         layer.g = color.g
         layer.b = color.b
         layer.a = color.a
+        // eslint-disable-next-line prettier/prettier
+        state.requestUpdateColorLayers = union(state.requestUpdateColorLayers, [id])
+    },
+    //editLayerVertices(state, { id, color }) {},
+    clearRebuildListRequest(state){
+        state.requestRebuildList = false
+    },
+    clearUpdateColorRequest(state){
+        state.requestUpdateColorLayers = []
+    },
+    clearUpdateVerticesRequest(state){
+        state.requestUpdateVerticesLayers = []
+    },
+    clearUpdateTypeRequest(state){
+        state.requestUpdateTypeLayers = []
     }
 }
 
