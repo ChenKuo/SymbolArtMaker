@@ -1,4 +1,5 @@
-#version 330 core
+#version 300 es
+precision mediump float;
 
 in vec2 vUV;
 in vec4 vColor;
@@ -11,7 +12,7 @@ out vec4 FragColor;
 uniform sampler2D myTextureSampler;
 
 void main(){
-	vec4 texture = texture2D( myTextureSampler, vUV);
+	vec4 texture = texture( myTextureSampler, vUV);
 	vec3 texColor = vIsFullColor * (texture.rgb - vec3(1.0)); //<0,0,0> if single channel
 	float texAlpha = dot(texture,vAlphaChannel);
 

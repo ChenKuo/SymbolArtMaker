@@ -93,7 +93,7 @@ const mutations = {
         state.requestUpdateColorLayers = union(state.requestUpdateColorLayers, [id])
     },
     //editLayerVertices(state, { id, color }) {},
-    clearRebuildListRequest(state){
+    clearRebuildListRequest(state) {
         state.requestRebuildList = false
     },
     clearUpdateColorRequest(state){

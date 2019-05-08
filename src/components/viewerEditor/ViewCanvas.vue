@@ -4,18 +4,23 @@
 
 <script>
 import SymbolArtDrawer from './SymbolArtDrawer.js'
+import symbolImage from '../../assets/symbols.png'
 
 export default {
     name: 'ViewCanvas',
+    created(){
+        this.texture.src = symbolImage
+    },
     mounted(){
-        SymbolArtDrawer.init(this.$el);
+        this.renderer = new SymbolArtDrawer(this.$el);
         let vertices = new Int8Array(360 * 8)
         let colors = new Uint8Array(360 * 16)
-        let types = new Uint8Array(360 * 4)
+        let types = new Uint16Array(360 * 4)
        
         colors.fill(255)
         let row = 0
         let col = 0
+        let lx, rx, ty, by
         for(let i = 0; i<325; i++){
             types.set([i,i,i,i],i*4)
             // x(-96 to 96) y(-48 to 48) wh=6
@@ -47,10 +52,19 @@ export default {
                 row++
             }
         }
-        SymbolArtDrawer.Render(types,colors,vertices, 359)
+        this.renderer.updateTypes(types)
+        this.renderer.updateColors(colors)
+        this.renderer.updateVertices(vertices)
+        let self = this
+        this.texture.onload = ()=>{
+            self.renderer.initTexture(self.texture)
+            self.renderer.draw(359)
+        }
     },
     data(){
         return{
+            texture: new Image(),
+            renderer: null,
             readyToRender: true,      
             vertices: new Int8Array(225 * 8),
             colors: new Uint8Array(225 * 16),
@@ -116,9 +130,8 @@ export default {
                     index * 4
                 )
             }
-            DFT(0, this.$state.treeData, updateArrays)
             this.render()
-            this.$store.commit(clearRebuildListRequest)
+            this.$store.commit('clearRebuildListRequest')
         },
         updateColorandRender(){
             let layers = this.$store.requestUpdateColorLayers
@@ -129,7 +142,7 @@ export default {
 
 
         render(){
-
+            this.renderer.draw(10)
         }
     }
 }
