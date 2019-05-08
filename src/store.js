@@ -74,7 +74,7 @@ const mutations = {
             state.parts[id].index = index
         }
         DFT(0, state.treeData, updateList)
-        state.requestRebuildList = true
+        state.requestRebuildList = list
     },
     select(state, id) {
         for (let i = 0; i < state.selected.length; i++) {
@@ -94,7 +94,7 @@ const mutations = {
     },
     //editLayerVertices(state, { id, color }) {},
     clearRebuildListRequest(state) {
-        state.requestRebuildList = false
+        state.requestRebuildList = null
     },
     clearUpdateColorRequest(state){
         state.requestUpdateColorLayers = []

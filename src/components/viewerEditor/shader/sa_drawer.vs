@@ -25,12 +25,11 @@ void main(){
 	//u=t/4%16
 	//v=t/4/16
 	//c=t%4
-	uint fullColor = (type >> 9); //1 means fullcolor, otw 0
+	uint fullColor = (type >>9 )&1u; //1 means fullcolor, otw 0
 	vec2 uv0_noColor = vec2((type >> 2) & 15u, (type >> 6));
 	vec2 uv0_color = vec2((type + 2u) & 15u, 5u+(((type & 63u) + 2u) >> 4));
 	vec2 uv0 = uv0_noColor * float(fullColor ^ 1u) + uv0_color * float(fullColor);
 	vUV = (uv0 + uv_offset)*uvUnit;
-	//vec4 Color = vec4(color.rgb*colorUnit, color.a*alphaUnit);
 	//vColor=vec4(color)*colorUnit;
 	vColor = color;
 	vIsFullColor = float(fullColor);

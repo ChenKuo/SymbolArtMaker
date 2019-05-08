@@ -3,7 +3,7 @@
         <color-picker :value="colorCode" @color-change="updateColor" :disabled="!layer" :width="200" :height="200"></color-picker>
         <div id="alpha-editor">
             <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewbox="0 0 192 24" width="100%" height="24">
-                <rect fill="white" x="0" y="0" width="100%" height="100%"/>
+                <rect fill="white" x="0" y="0" width="100%" height="24"/>
                 <pattern id="pattern"
                         x="0" y="0" width="12" height="12"
                         patternUnits="userSpaceOnUse" >
@@ -11,18 +11,18 @@
                     <rect fill="gray" x="6" width="6" height="6" y="6"/>
                 </pattern>
                 <g class="opacity">
-                    <rect fill="url(#pattern)" y="0" x="0" width="100%" height="100%"/>
-                    <rect :fill="colorCode" opacity="1" y="0" x="0" width="24" height="24"/>
-                    <rect :fill="colorCode" opacity="0.875" y="0" x="24" width="24" height="24"/>
-                    <rect :fill="colorCode" opacity="0.75" y="0" x="48" width="24" height="24"/>
-                    <rect :fill="colorCode" opacity="0.625" y="0" x="72" width="24" height="24"/>
-                    <rect :fill="colorCode" opacity="0.5" y="0" x="96" width="24" height="24"/>
-                    <rect :fill="colorCode" opacity="0.375" y="0" x="120" width="24" height="24"/>
-                    <rect :fill="colorCode" opacity="0.25" y="0" x="144" width="24" height="24"/>
-                    <rect :fill="colorCode" opacity="0.125" y="0" x="168" width="24" height="24"/>
+                    <rect fill="url(#pattern)" y="0" x="0" width="192" height="24"/>
+                    <rect :fill="colorCode" opacity="0.125" y="0" x="0" width="24" height="24"/>
+                    <rect :fill="colorCode" opacity="0.25" y="0" x="24" width="24" height="24"/>
+                    <rect :fill="colorCode" opacity="0.375" y="0" x="48" width="24" height="24"/>
+                    <rect :fill="colorCode" opacity="0.5" y="0" x="72" width="24" height="24"/>
+                    <rect :fill="colorCode" opacity="0.625" y="0" x="96" width="24" height="24"/>
+                    <rect :fill="colorCode" opacity="0.75" y="0" x="120" width="24" height="24"/>
+                    <rect :fill="colorCode" opacity="0.875" y="0" x="144" width="24" height="24"/>
+                    <rect :fill="colorCode" opacity="1" y="0" x="168" width="24" height="24"/>
                 </g>
             </svg>
-            <input type="range" min="1" max="8" v-model="alpha" class="slider" id="alpha-slider">
+            <input type="range" min="1" max="8" :value="alpha" @input="updateAlpha" class="slider" id="alpha-slider">
         </div>
     </div>
 </template>
@@ -36,8 +36,7 @@ export default {
     },
     data() {
         return {
-
-            alpha: 1
+ 
         }
     },
     computed: {
@@ -59,6 +58,13 @@ export default {
             let g = l.g.toString(16)
             let b = l.b.toString(16)
             return '#'+r+g+b
+        },
+        alpha: function(){
+            let l=this.layer
+            if(!l){
+                return 8
+            }
+            return (this.layer.a+1)/32
         }
     },
     methods: {
@@ -72,6 +78,16 @@ export default {
             let a = this.layer.a
             this.$store.commit('editLayerColor',{id:this.id,color:{r,g,b,a}})
         },
+        updateAlpha(e){
+            if(!this.layer){
+                return
+            }
+            let r = this.layer.r
+            let g = this.layer.g
+            let b = this.layer.b
+            let a = +(e.srcElement.value) * 32 - 1
+            this.$store.commit('editLayerColor',{id:this.id,color:{r,g,b,a}})
+        }
     },
 }
 </script>

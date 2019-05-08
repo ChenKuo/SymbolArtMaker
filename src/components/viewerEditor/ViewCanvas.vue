@@ -12,7 +12,8 @@ export default {
         this.texture.src = symbolImage
     },
     mounted(){
-        this.renderer = new SymbolArtDrawer(this.$el);
+        this.canvas = this.$el;
+        this.renderer = new SymbolArtDrawer(this.canvas);
         let vertices = new Int8Array(360 * 8)
         let colors = new Uint8Array(360 * 16)
         let types = new Uint16Array(360 * 4)
@@ -26,8 +27,8 @@ export default {
             // x(-96 to 96) y(-48 to 48) wh=6
             lx = 6 * col - 96
             rx = 6 * col + 6 - 96
-            ty = 6 * row + 48
-            by = 6 * row - 6 + 48
+            ty = -6 * row + 48
+            by = -6 * row - 6 + 48
             vertices.set([lx,by,lx,ty,rx,by,rx,ty],i*8)
             col++
             if(col === 32){
@@ -43,8 +44,8 @@ export default {
             types.set([t,t,t,t],(i+325)*4)
             lx = 6 * col - 96
             rx = 6 * col + 6 - 96
-            ty = 6* row + 48
-            by = 6 * row - 6 + 48
+            ty = -6* row + 48
+            by = -6 * row - 6 + 48
             vertices.set([lx,by,lx,ty,rx,by,rx,ty],(i+325)*8)
             col++
             if(col === 32){
@@ -58,11 +59,16 @@ export default {
         let self = this
         this.texture.onload = ()=>{
             self.renderer.initTexture(self.texture)
+            //self.renderer.updateVertices(new Int8Array([-50,-50,-50,50,50,-50,50,50]))
+            //self.renderer.updateTypes(new Uint16Array([514,514,514,514]))
+            //self.renderer.draw(1)
+            self.resize()
             self.renderer.draw(359)
         }
     },
     data(){
         return{
+            canvas: null,
             texture: new Image(),
             renderer: null,
             readyToRender: true,      
@@ -73,7 +79,7 @@ export default {
         }
     },
     computed: {
-        rebuild(){
+        rebuildLayers(){
             return this.$store.state.requestRebuildList
         },
         updateColor(){
@@ -87,62 +93,84 @@ export default {
         }
     },
     watch: {
-        rebuild(requested){
-            if(this.readyToRender && requested) {
+        rebuildLayers(list){
+            if(this.readyToRender && list) {
                 requestAnimationFrame(this.rebuildListandRender)
+                this.readyToRender = false
             }
-            this.readyToRender = false
+            
         },
         updateColor(layers){
             if(this.readyToRender && layers.length){
                 requestAnimationFrame(this.updateColorandRender)
+                this.readyToRender = false
             }
-            this.readyToRender = false
         },
         updateVertices(layers){
             if(this.readyToRender && layers.length){
                 requestAnimationFrame(this.updateVerticesandRender)
+                this.readyToRender = false
             }
-            this.readyToRender = false
         },
         updateType(layers){
             if(this.readyToRender && layers.length) {
                 requestAnimationFrame(this.updateTypeandRender)
+                this.readyToRender = false
             }
-            this.readyToRender = false
         }
 
     },
     methods: {
         rebuildListandRender(){
-            const updateArrays = (layerId, index) => {
+            let list = this.rebuildLayers
+            for(let i=0; i<list.length; i++){
+                let l = this.$store.state.parts[list[i]]
                 this.vertices.set(
                     [l.lbx, l.lby, l.ltx, l.lty, l.rbx, l.rby, l.rtx, l.rty],
-                    index * 8
+                    i * 8
                 )
                 this.colors.set(
                     // eslint-disable-next-line prettier/prettier
                     [l.r, l.g, l.b, l.a, l.r, l.g, l.b, l.a, l.r, l.g, l.b, l.a, l.r, l.g, l.b, l.a],
-                    index * 16
+                    i * 16
                 )
                 this.types.set(
                     [l.type, l.type, l.type, l.type],
-                    index * 4
+                    i * 4
                 )
             }
+            //this.renderer.updateTypes(this.types)
+            this.renderer.updateColors(this.colors)
+            //this.renderer.updateVertices(this.vertices)
             this.render()
             this.$store.commit('clearRebuildListRequest')
         },
         updateColorandRender(){
-            let layers = this.$store.requestUpdateColorLayers
-            for(let i = 0; i<layers.length; i++) {
-                layers[i] //wut's the index...
+            let layersToUpdate = this.$store.state.requestUpdateColorLayers
+            for(let i = 0; i<layersToUpdate.length; i++) {
+                let l = this.$store.state.parts[layersToUpdate[i]]
+                this.colors.set(
+                    // eslint-disable-next-line prettier/prettier
+                    [l.r, l.g, l.b, l.a, l.r, l.g, l.b, l.a, l.r, l.g, l.b, l.a, l.r, l.g, l.b, l.a],
+                    l.index * 16
+                )
             }
+            this.renderer.updateColors(this.colors)
+            this.render()
+            this.$store.commit('clearUpdateColorRequest')
         },
 
 
         render(){
-            this.renderer.draw(10)
+            this.resize()
+            this.renderer.draw(this.$store.state.numberOfLayers)
+            this.readyToRender = true
+        },
+        resize(){
+            let canvas = this.canvas
+            let displayWidth  = canvas.clientWidth;
+            let displayHeight = canvas.clientHeight;
+            this.renderer.resize(displayWidth,displayHeight)
         }
     }
 }

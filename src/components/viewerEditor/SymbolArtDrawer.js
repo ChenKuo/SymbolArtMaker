@@ -2,7 +2,6 @@ import sa_vs from './shader/sa_drawer.vs'
 import sa_fs from './shader/sa_drawer.fs'
 //import post_vs from './shader/postprocessing.vs'
 //import post_fs from './shader/postprocessing.fs'
-import texImage from '../../assets/symbols.png'
 
 const MAX_LAYER_LEN = 360
 
@@ -14,7 +13,6 @@ const initWebgl = canvas => {
         gl.disable(gl.DEPTH_TEST)
         gl.enable(gl.BLEND)
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
-        //gl.depthFunc(gl.LEQUAL);
         gl.clear(gl.COLOR_BUFFER_BIT)
     }
     return gl
@@ -67,25 +65,23 @@ class SymbolArtDrawer {
         this.gl = null
         this.shaderProgram = null
         this.buffers = null
-        //this.textureImage = new Image()
         this.init(canvas)
     }
     init(canvas) {
         let gl = initWebgl(canvas)
         this.gl = gl
-        /*
-        this.textureImage.src = texImage
-        this.textureImage.onload = () => {
-            this.initTexture()
-        }
-        */
         this.shaderProgram = initShader(gl)
         gl.useProgram(this.shaderProgram.program)
         this.initVAO()
+        gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight)
     }
-    changeCanvasSize(w, h) {
-        //TODO: implement
-        w = h
+    resize(width, height) {
+        let gl = this.gl
+        if (gl.canvas.width !== width || gl.canvas.height !== height) {
+            gl.canvas.width = width
+            gl.canvas.height = height
+            gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight)
+        }
     }
     updateVertices(vertices) {
         let gl = this.gl
@@ -104,7 +100,6 @@ class SymbolArtDrawer {
     }
     initTexture(image) {
         let gl = this.gl
-        //let image = this.textureImage
         gl.bindTexture(gl.TEXTURE_2D, this.buffers.texture)
         gl.texImage2D(
             gl.TEXTURE_2D,
@@ -139,7 +134,7 @@ class SymbolArtDrawer {
         let indices = new Uint16Array(MAX_LAYER_LEN * 6)
         for (let i = 0; i < MAX_LAYER_LEN; i++) {
             let os = i * 4
-            corners.set([1, 2, 3, 4], os)
+            corners.set([0, 1, 2, 3], os)
             indices.set([os, os + 1, os + 2, os + 2, os + 1, os + 3], i * 6)
         }
         gl.enableVertexAttribArray(attr.position)
