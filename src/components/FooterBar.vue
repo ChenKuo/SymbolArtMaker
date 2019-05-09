@@ -1,6 +1,6 @@
 <template>
     <div class="footer">
-        Footer Bar
+        Welcome to Symbol Art Maker, a project aiming to make the process of symbol art creation easy and enjoyable.  Please be patient while the project is under construction.
     </div>
 </template>
 

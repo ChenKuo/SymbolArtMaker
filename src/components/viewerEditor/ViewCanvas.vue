@@ -40,7 +40,7 @@ export default {
             return this.$store.state.requestUpdateColorLayers
         },
         updateVertices(){
-            return this.$store.state.requestUpdateVerticesLayers
+            return this.$store.state.requestUpdateVertLayers
         },
         updateType(){
             return this.$store.state.requestUpdateTypeLayers
@@ -93,9 +93,9 @@ export default {
                     i * 4
                 )
             }
-            //this.renderer.updateTypes(this.types)
+            this.renderer.updateTypes(this.types)
             this.renderer.updateColors(this.colors)
-            //this.renderer.updateVertices(this.vertices)
+            this.renderer.updateVertices(this.vertices)
             this.render()
             this.$store.commit('clearRebuildListRequest')
         },
@@ -113,8 +113,32 @@ export default {
             this.render()
             this.$store.commit('clearUpdateColorRequest')
         },
-
-
+        updateVerticesandRender(){
+            let layersToUpdate = this.$store.state.requestUpdateVertLayers
+            for(let i = 0; i<layersToUpdate.length; i++) {
+                let l = this.$store.state.parts[layersToUpdate[i]]
+                this.vertices.set(
+                    [l.lbx, l.lby, l.ltx, l.lty, l.rbx, l.rby, l.rtx, l.rty],
+                    l.index * 8
+                )
+            }
+            this.renderer.updateVertices(this.vertices)
+            this.render()
+            this.$store.commit('clearUpdateVertRequest')
+        },
+        updateTypeandRender(){
+            let layersToUpdate = this.$store.state.requestUpdateTypeLayers
+            for(let i = 0; i<layersToUpdate.length; i++) {
+                let l = this.$store.state.parts[layersToUpdate[i]]
+                this.types.set(
+                    [l.type, l.type, l.type, l.type],
+                    l.index * 4
+                )
+            }
+            this.renderer.updateTypes(this.types)
+            this.render()
+            this.$store.commit('clearUpdateTypeRequest')
+        },
         render(){
             this.resize()
             this.renderer.draw(this.$store.state.numberOfLayers)

@@ -2,7 +2,7 @@
     <div class="viewer_editor">
         <div id="viewer-content" class="limit_area">
             <div class="canvas_area">
-                <svg xmlns="http://www.w3.org/2000/svg" v-show="false" version="1.1" viewbox="0 0 768 384" width="100%" height="100%">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewbox="0 0 768 384" width="100%" height="100%">
                     <rect fill="white" x="0" y="0" width="100%" height="100%"/>
                     <pattern id="pattern24"
                             x="0" y="0" width="24" height="24"
@@ -12,14 +12,16 @@
                     </pattern>
                     <rect fill="url(#pattern24)" y="0" x="0" width="100%" height="100%"/>
                 </svg>
-                <ViewCanvas class="canvas"></ViewCanvas>
+                <ViewCanvas class="canvas"/>
             </div>
+            <VertexEditor class="vert_editor"/>
         </div>
     </div>
 </template>
 
 <script>
 import ViewCanvas from './viewerEditor/ViewCanvas.vue'
+import VertexEditor from './viewerEditor/VertexEditor.vue'
 
 export default {
     name: 'ViewerEditor',
@@ -27,7 +29,8 @@ export default {
         this.center()
     },
     components: {
-        ViewCanvas
+        ViewCanvas,
+        VertexEditor
     },
     methods: {
         center(){
@@ -53,6 +56,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
 .canvas_area {
     width: 75%;
@@ -63,6 +67,13 @@ export default {
 .canvas {
     top:0;
     left:0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+.vert_editor {
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     position: absolute;

@@ -1,6 +1,10 @@
 <template>
     <div class="shape_editor">
-        <div class="shape_thumb" v-for="shape in shapeList" :key="shape.type">
+        <div class="shape_thumb" 
+            v-for="shape in shapeList" 
+            :key="shape.type" 
+            :class="{ active: shape.type === layerShape}" 
+            v-on:click="updateShape(shape.type)">
             <img class="shape_image" :src="shape.url">
         </div>
     </div>
@@ -12,10 +16,28 @@ export default {
     computed: {
         shapeList() {
             return this.$store.state.shapeList;
-            //return [...Array(360)].map((x,index)=>({type:index, src:""}))
+        },
+        LayerId: function(){
+            let selected = this.$store.state.selected
+            if(selected.length === 1 && !selected[0].children)
+                return selected[0]
+            return null
+        },
+        layer: function(){
+            return this.$store.state.parts[this.LayerId]
+        },
+        layerShape: function(){
+            return this.layer? this.layer.type : null
+        }
+    },
+    methods: {
+        updateShape(type) {
+            if(!this.layer){
+                return
+            }
+            this.$store.commit('editLayerType',{id: this.LayerId, type})
         }
     }
-    
 }
 </script>
 

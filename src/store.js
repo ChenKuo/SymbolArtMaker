@@ -19,13 +19,13 @@ const newLayer = (name = 'unnamed layer') => {
         b: 255,
         a: 255,
         ltx: -16,
-        lty: -16,
+        lty: 16,
         lbx: -16,
-        lby: 16,
+        lby: -16,
         rtx: 16,
-        rty: -16,
+        rty: 16,
         rbx: 16,
-        rby: 16,
+        rby: -16,
         name: name,
         selected: false,
         index: null,
@@ -54,7 +54,7 @@ const state = {
     selected: [], //selected layers and groups
     requestRebuildList: null,
     requestUpdateColorLayers: [],
-    requestUpdateVerticesLayers: [],
+    requestUpdateVertLayers: [],
     requestUpdateTypeLayers: [],
     numberOfLayers: 0,
     shapeList: null,
@@ -83,24 +83,32 @@ const mutations = {
         state.selected = [id]
         state.parts[id].selected = true
     },
+    editLayerType(state, { id, type }) {
+        let layer = state.parts[id]
+        layer.type = type
+        // eslint-disable-next-line prettier/prettier
+        state.requestUpdateTypeLayers = union(state.requestUpdateTypeLayers, [id])
+    },
     editLayerColor(state, { id, color }) {
         let layer = state.parts[id]
-        layer.r = color.r
-        layer.g = color.g
-        layer.b = color.b
-        layer.a = color.a
+        Object.assign(layer, color)
         // eslint-disable-next-line prettier/prettier
         state.requestUpdateColorLayers = union(state.requestUpdateColorLayers, [id])
     },
-    //editLayerVertices(state, { id, color }) {},
+    editLayerVertices(state, { id, vertices }) {
+        let layer = state.parts[id]
+        Object.assign(layer, vertices)
+        // eslint-disable-next-line prettier/prettier
+        state.requestUpdateVertLayers = union(state.requestUpdateVertLayers, [id])
+    },
     clearRebuildListRequest(state) {
         state.requestRebuildList = null
     },
     clearUpdateColorRequest(state){
         state.requestUpdateColorLayers = []
     },
-    clearUpdateVerticesRequest(state) {
-        state.requestUpdateVerticesLayers = []
+    clearUpdateVertRequest(state) {
+        state.requestUpdateVertLayers = []
     },
     clearUpdateTypeRequest(state) {
         state.requestUpdateTypeLayers = []
