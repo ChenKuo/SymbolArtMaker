@@ -1,36 +1,30 @@
 <template>
     <svg xmlns="http://www.w3.org/2000/svg"
 		v-show="layer"
-		>
+        v-on:mousedown="onDragStart"
+        viewBox="-127 -127 255 255"
+        transform="scale(1, -1)"
+	>
         <g>
             <polygon 
                 :points="[v.ltx,v.lty,v.rtx,v.rty,v.rbx,v.rby,v.lbx,v.lby].join(' ')"
                 opacity="0"
-                v-on:mousedown="onDragStart(true,true,true,true)"
-                tag="lt rt rb lb"
+                vert="lt rt rb lb"
 			/>
 	
-			<line :x1="v.ltx" :y1="v.lty" :x2="v.rtx" :y2="v.rty" 
-                v-on:mousedown="onDragStart(true, true, false, false)" tag="lt rt"
-				stroke-width="2" stroke="black"/>
-			<line :x1="v.rtx" :y1="v.rty" :x2="v.rbx" :y2="v.rby" 
-                v-on:mousedown="onDragStart(false, true, true, false)" tag="rt rb"
-				stroke-width="2" stroke="black" />
-			<line :x1="v.rbx" :y1="v.rby" :x2="v.lbx" :y2="v.lby" 
-                v-on:mousedown="onDragStart(false, false, true, true)" tag="rb lb"
-				stroke-width="2" stroke="black" />
-			<line :x1="v.lbx" :y1="v.lby" :x2="v.ltx" :y2="v.lty" 
-                v-on:mousedown="onDragStart(true, false, false, true)" tag="lb lt"
-				stroke-width="2" stroke="black" />
-	
-            <circle :cx="v.ltx" :cy="v.lty" r="3" 
-                v-on:mousedown="onDragStart(true, false, false, false)" tag="lt"/> 
-            <circle :cx="v.rtx" :cy="v.rty" r="3" 
-                v-on:mousedown="onDragStart(false, true, false, false)" tag="rt"/>
-            <circle :cx="v.rbx" :cy="v.rby" r="3" 
-                v-on:mousedown="onDragStart(false, false, true, false)" tag="rb"/>	
-            <circle :cx="v.lbx" :cy="v.lby" r="3" 
-                v-on:mousedown="onDragStart(false, false, false, true)" tag="lb"/>	
+			<line :x1="v.ltx" :y1="v.lty" :x2="v.rtx" :y2="v.rty" vert="lt rt"
+				stroke-width="0.5" stroke="black"/>
+			<line :x1="v.rtx" :y1="v.rty" :x2="v.rbx" :y2="v.rby" vert="rt rb"
+				stroke-width="0.5" stroke="black" />
+			<line :x1="v.rbx" :y1="v.rby" :x2="v.lbx" :y2="v.lby" vert="rb lb"
+				stroke-width="0.5" stroke="black" />
+			<line :x1="v.lbx" :y1="v.lby" :x2="v.ltx" :y2="v.lty" vert="lb lt"
+				stroke-width="0.5" stroke="black" />
+
+            <circle :cx="v.ltx" :cy="v.lty" r="1" class="point" vert="lt"/> 
+            <circle :cx="v.rtx" :cy="v.rty" r="1" class="point" vert="rt"/>
+            <circle :cx="v.rbx" :cy="v.rby" r="1" class="point" vert="rb"/>	
+            <circle :cx="v.lbx" :cy="v.lby" r="1" class="point" vert="lb"/>	
         </g>
     </svg>
 </template>
@@ -42,34 +36,58 @@ export default {
         return {
             dragStartX: null, //mouse position before drag
             dragStartY: null,
-            partBeforeDrag: null //copy of the vertices of the  part before dragging
+            verticesBeforeDrag: null, //copy of the vertices before dragging
+            dragVertex: null,
+            scale: 256/1024,
+            updateReady: true
         }
     },
     computed: {
-        layerId: function(){
+        layerId(){
             let selected = this.$store.state.selected
             if(selected.length === 1 && !selected[0].children)
                 return selected[0]
             return null
         },
-        layer: function(){
+        layer(){
             return this.$store.state.parts[this.layerId]
+        },
+        // shortened for vertices
+        v(){
+            return this.layer||{}
         },
     },
     methods: {
-        onDragStart(lt, rt, rb, lb){
-            document.addEventListener("mousemove", this.onDragging, false)
-            document.addEventListener("mouseup", this.onDragEnd, false)
+        onDragStart(e){
+            let vert = e.srcElement.getAttribute('vert')
+            if(!vert) return
+            
+            this.dragVertex = vert.split(' ')
             this.dragStartX = e.x
             this.dragStartY = e.y
-            this.partBeforeDrag
+            let {lbx,lby, ltx, lty, rbx, rby, rtx,rty, ...rest} = this.layer
+            this.verticesBeforeDrag = {lbx, lby, ltx, lty, rbx, rby, rtx, rty }
+            document.addEventListener('mousemove', this.onDragging, false)
+            document.addEventListener('mouseup', this.onDragEnd, false)
         },
         onDragging(e){
-            let moveX=e.x-this.dragStartX;
-			let moveY=e.y-this.dragStartY;
+            if(this.updateReady){
+                requestAnimationFrame(()=>{
+                    let moveX=(e.x-this.dragStartX) * this.scale
+                    let moveY=(this.dragStartY-e.y) * this.scale
+                    let changedVertices = {}
+                    for(let i = 0; i<this.dragVertex.length; i++){
+                        let vertName = this.dragVertex[i]
+                        changedVertices[vertName+'x'] = this.verticesBeforeDrag[vertName+'x'] + moveX
+                        changedVertices[vertName+'y'] = this.verticesBeforeDrag[vertName+'y'] + moveY
+                    }
+                    this.$store.commit('editLayerVertices',{id: this.layerId, vertices: changedVertices})
+                    this.updateReady = true
+                })
+                this.updateReady = false
+            }
         },
         onDragEnd(){
-            this.dragElement = null
             document.removeEventListener("mousemove", this.onDragging, false)
             document.removeEventListener("mouseup", this.onDragEnd, false)
         }

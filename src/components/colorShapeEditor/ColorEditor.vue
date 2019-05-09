@@ -10,7 +10,7 @@
                     <rect fill="gray" x="0" width="6" height="6" y="0"/>
                     <rect fill="gray" x="6" width="6" height="6" y="6"/>
                 </pattern>
-                <g class="opacity">
+                <g>
                     <rect fill="url(#pattern)" y="0" x="0" width="192" height="24"/>
                     <rect :fill="colorCode" opacity="0.125" y="0" x="0" width="24" height="24"/>
                     <rect :fill="colorCode" opacity="0.25" y="0" x="24" width="24" height="24"/>
