@@ -2,7 +2,7 @@
     <div class="color_editor">
         <color-picker :value="colorCode" @color-change="updateColor" :disabled="!layer" :width="200" :height="200"></color-picker>
         <div id="alpha-editor">
-            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewbox="0 0 192 24" width="100%" height="24">
+            <svg id="alpha-bg" xmlns="http://www.w3.org/2000/svg" version="1.1" viewbox="0 0 192 24">
                 <rect fill="white" x="0" y="0" width="100%" height="24"/>
                 <pattern id="pattern"
                         x="0" y="0" width="12" height="12"
@@ -22,7 +22,7 @@
                     <rect :fill="colorCode" opacity="1" y="0" x="168" width="24" height="24"/>
                 </g>
             </svg>
-            <input type="range" min="1" max="8" :value="alpha" @input="updateAlpha" class="slider" id="alpha-slider">
+            <input type="range" min="1" max="8" :value="alpha" @input="updateAlpha" id="alpha-slider">
         </div>
     </div>
 </template>
@@ -93,13 +93,26 @@ export default {
 </script>
 
 <style>
+.color_editor{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+}
 #alpha-editor {
     position:relative;
+    width: 192px;
+    height: 24px;
 }
-.slider{
+#alpha-bg{
+    width: 100%;
+    height: 100%
+}
+#alpha-slider {
+    width: 100%;
+    height: 100%;
     -webkit-appearance: none;  /* Override default CSS styles */
     appearance: none;
-    width: 100%; /* Full-width */
+    width: 192px; /* Full-width */
     height: 24px; /* Specified height */
     background: transparent; /* Grey background */
     outline: none; /* Remove outline */
@@ -112,10 +125,10 @@ export default {
     padding: 0;
     margin: 0;
 }
-.slider:hover {
+#alpha-slider:hover {
   opacity: 1; /* Fully shown on mouse-over */
 }
-.slider::-webkit-slider-thumb {
+#alpha-slider::-webkit-slider-thumb {
   -webkit-appearance: none; /* Override default look */
   appearance: none;
   width: 24px;
@@ -124,7 +137,7 @@ export default {
   border: 2px solid black;
   cursor: pointer;
 }
-.slider::-moz-range-thumb {
+#alpha-slider::-moz-range-thumb {
   width: 24px;
   height: 24px;
   background: transparent; 

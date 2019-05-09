@@ -57,7 +57,7 @@ const state = {
     requestUpdateVerticesLayers: [],
     requestUpdateTypeLayers: [],
     numberOfLayers: 0,
-    symbolImages: null,
+    shapeList: null,
 }
 
 const mutations = {
@@ -99,15 +99,15 @@ const mutations = {
     clearUpdateColorRequest(state){
         state.requestUpdateColorLayers = []
     },
-    clearUpdateVerticesRequest(state){
+    clearUpdateVerticesRequest(state) {
         state.requestUpdateVerticesLayers = []
     },
-    clearUpdateTypeRequest(state){
+    clearUpdateTypeRequest(state) {
         state.requestUpdateTypeLayers = []
     },
-    setSymbolImages(state, { imageList }) {
-        state.symbolImages = imageList
-    }
+    setShapeList(state, { shapeList }) {
+        state.shapeList = shapeList
+    },
 }
 
 const getters = {}
