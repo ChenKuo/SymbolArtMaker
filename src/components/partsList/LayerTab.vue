@@ -1,6 +1,6 @@
 <template>
     <div class="layer_tab" v-on:click.stop.prevent="select" :class="{selected:selected}">
-        <img class="image" :style="imageStyle">
+        <img class="image" :style="imageStyle" :src="imageSrc">
         <div>{{name}}</div>
     </div>
 </template>
@@ -9,24 +9,28 @@
 export default {
     props: {id:{type:Number, required:true}},
     computed:{
-        selected: function(){
+        selected(){
             return this.part.selected
         },
-        part: function(){
+        part(){
             return this.$store.state.parts[this.id]
         },
-        name: function(){
+        name(){
             return this.part.name
         },
-        imageStyle: function(){
+        imageStyle(){
             let p = this.part
             return {
                 backgroundColor:'rgb('+p.r+','+p.g+','+p.b+','+p.a/255+')'
             }
+        },
+        imageSrc() {
+            let i = this.part.type >= 512? this.part.type - 512 + 325: this.part.type
+            return this.$store.state.shapeList[i].url
         }
     },
     methods: {
-        select: function(){
+        select(){
             this.$store.commit("select", this.id)
         },
     }

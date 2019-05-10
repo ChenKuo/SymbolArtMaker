@@ -3,7 +3,7 @@
 		v-show="layer"
         v-on:mousedown="onDragStart"
         viewBox="-127 -127 255 255"
-        transform="scale(1, -1)"
+        transform="scale(1, 1)"
 	>
         <g>
             <polygon 
@@ -65,7 +65,7 @@ export default {
             this.dragVertex = vert.split(' ')
             this.dragStartX = e.x
             this.dragStartY = e.y
-            let {lbx,lby, ltx, lty, rbx, rby, rtx,rty, ...rest} = this.layer
+            let {lbx, lby, ltx, lty, rbx, rby, rtx,rty, ...rest} = this.layer
             this.verticesBeforeDrag = {lbx, lby, ltx, lty, rbx, rby, rtx, rty }
             document.addEventListener('mousemove', this.onDragging, false)
             document.addEventListener('mouseup', this.onDragEnd, false)
@@ -74,7 +74,7 @@ export default {
             if(this.updateReady){
                 requestAnimationFrame(()=>{
                     let moveX=(e.x-this.dragStartX) * this.scale
-                    let moveY=(this.dragStartY-e.y) * this.scale
+                    let moveY=(e.y-this.dragStartY) * this.scale
                     let changedVertices = {}
                     for(let i = 0; i<this.dragVertex.length; i++){
                         let vertName = this.dragVertex[i]

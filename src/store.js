@@ -19,13 +19,13 @@ const newLayer = (
     b = 0,
     a = 255,
     ltx = -16,
-    lty = 16,
+    lty = -16,
     lbx = -16,
-    lby = -16,
+    lby = 16,
     rtx = 16,
-    rty = 16,
+    rty = -16,
     rbx = 16,
-    rby = -16
+    rby = 16
 ) => ({
     visibility: Boolean(visibility),
     type: Number(type),
@@ -77,7 +77,7 @@ const mutations = {
     loadSymbolArt(state, sa) {
         let parts = {}
         let treedata = []
-        for (let i = sa.layer.length-1; i >=0; i--) {
+        for (let i = sa.layer.length - 1; i >= 0; i--) {
             let l = sa.layer[i]._attributes
             let r = parseInt(l.color.substr(1, 2), 16)
             let g = parseInt(l.color.substr(3, 2), 16)
@@ -117,6 +117,7 @@ const mutations = {
         }
         DFT(0, state.treeData, updateList)
         state.requestRebuildList = list
+        state.selected = []
     },
     addLayer(state) {
         let id = ID()
@@ -188,13 +189,13 @@ export default new Vuex.Store({
 
 const convertType = t => {
     t= +t + 1
-    if (1 <= t && t <= 80) return t - 1
-    if (241 <= t && t <= 292) return t - 241 + 80
-    if (321 <= t && t <= 359) return t - 321 + 132
-    if (401 <= t && t <= 439) return t - 401 + 171
-    if (481 <= t && t <= 517) return t - 481 + 210
-    if (561 <= t && t <= 581) return t - 561 + 247
-    if (641 <= t && t <= 697) return t - 641 + 268
+    if (241 <= t && t <= 292) return t - 241 
+    if (321 <= t && t <= 359) return t - 321 + 52
+    if (401 <= t && t <= 439) return t - 401 + 91
+    if (481 <= t && t <= 517) return t - 481 + 130
+    if (561 <= t && t <= 581) return t - 561 + 167
+    if (641 <= t && t <= 697) return t - 641 + 188
+    if (1 <= t && t <= 80) return t - 1 + 245
     if (721 <= t && t <= 754) return t - 721 + 512
     return 0
 }

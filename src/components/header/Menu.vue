@@ -17,8 +17,8 @@ export default {
                 {
                     value: 'File',
                     options: [
-                        {value: 'import', options: ['saml']},
-                        'more options will come'
+                        {value: 'Import from', options: ['.saml file']},
+                        'more will be added'
                     ]
                 },
                 {
@@ -44,7 +44,7 @@ export default {
     methods: {
         onOption(value){
             switch(value){
-                case 'File/import/saml': {
+                case 'File/Import from/.saml file': {
                     const x = document.createElement("INPUT")
                     x.setAttribute("type", "file")
                     x.click()

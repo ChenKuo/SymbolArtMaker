@@ -164,8 +164,8 @@ export default {
                 // x(-96 to 96) y(-48 to 48) wh=6
                 lx = 6 * col - 96
                 rx = 6 * col + 6 - 96
-                ty = -6 * row + 48
-                by = -6 * row - 6 + 48
+                ty = 6 * row - 48
+                by = 6 * row + 6 - 48
                 vertices.set([lx,by,lx,ty,rx,by,rx,ty],i*8)
                 col++
                 if(col === 32){
@@ -181,8 +181,8 @@ export default {
                 types.set([t,t,t,t],(i+325)*4)
                 lx = 6 * col - 96
                 rx = 6 * col + 6 - 96
-                ty = -6* row + 48
-                by = -6 * row - 6 + 48
+                ty = 6* row - 48
+                by = 6 * row + 6 - 48
                 vertices.set([lx,by,lx,ty,rx,by,rx,ty],(i+325)*8)
                 col++
                 if(col === 32){
@@ -234,6 +234,11 @@ export default {
                     row++
                 }
             }
+
+            this.renderer.updateTypes(this.types)
+            this.renderer.updateColors(this.colors)
+            this.renderer.updateVertices(this.vertices)
+            this.render()
             this.$store.commit('setShapeList',{shapeList})
         }
     },
