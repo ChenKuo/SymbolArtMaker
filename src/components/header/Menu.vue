@@ -1,31 +1,62 @@
 <template>
-    <div class="menu">
-        <div class="topic"> File </div>
-        <div class="topic"> Edit </div>
-        <div class="topic"> View </div>
-        <div class="topic"> Generator </div>
-        <div class="topic"> Help </div>
-    </div>
+    <DropdownMenu :menu="menulist" id="menu" v-on:optionclick="onOption"/>
 </template>
 
 <script>
+import DropdownMenu from './dropDown/DropdownMenu.vue'
+
 export default {
     name: 'Menu',
+    components: {
+        DropdownMenu
+    },
+    data(){
+        return{
+            menulist: [
+                {
+                    value: 'File',
+                    options: [
+                        {value: 'import', options: ['saml']},
+                        'more options will come'
+                    ]
+                },
+                {
+                    value: 'Edit',
+                    options: ['edit option']
+                },
+                {
+                    value: 'View',
+                    options: ['view option']
+                },
+                {
+                    value: 'Generator',
+                    options: ['gen option']
+                },
+                {
+                    value: 'Help',
+                    options: ['sorry cant halp u']
+                },
+            ]
+        }
+
+    },
+    methods: {
+        onOption(value){
+            switch(value){
+                case 'File/import/saml':
+                    
+                    break;
+            }
+        }
+    }
 }
 </script>
 
 <style>
 
-.menu {
-    display: flex;
-    flex-direction: row;
+#menu{
+    height: 100%;
 }
-.topic {
-    flex: 0 0 auto;
-    padding: 8px;
-}
-.topic:hover {
-    background-color: gray;
-}
+
 </style>
 

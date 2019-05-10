@@ -9,7 +9,6 @@ const initWebgl = canvas => {
     let gl = canvas.getContext('webgl2', { alpha: true })
     if (gl) {
         gl.clearColor(0.0, 0.0, 0.0, 0.0)
-
         gl.disable(gl.DEPTH_TEST)
         gl.enable(gl.BLEND)
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
@@ -65,10 +64,9 @@ const initShader = gl => {
             corners: gl.createBuffer(),
             indices: gl.createBuffer(),
             texture: gl.createTexture(),
-        }
+        },
     }
     let attr = shader.attributes
-    let uni = shader.uniforms
     let buffers = shader.buffers
     let corners = new Uint8Array(MAX_LAYER_LEN * 4)
     let indices = new Uint16Array(MAX_LAYER_LEN * 6)
@@ -97,7 +95,7 @@ const initShader = gl => {
 
     gl.activeTexture(gl.TEXTURE0 + 0)
     gl.bindTexture(gl.TEXTURE_2D, buffers.texture)
-    gl.uniform1i(uni.texture, 0)
+    gl.uniform1i(shader.uniforms.texture, 0)
 
     return shader
 }
@@ -123,17 +121,35 @@ const initPostShader = gl => {
         framebuffer: gl.createFramebuffer(),
     }
     let attr = shader.attributes
-    let uni = shader.uniforms
     let buffers = shader.buffers
-    let xyuv = new Int8Array( //position and texture coordinate for 2 triangles
-        [-128, 127,  0, 127,
-        -128, -128,  0, 0,
-         127, -128,  127, 0,
-        -128,  127,  0, 127,
-         127, -128,  127, 0,
-         127,  127,  127, 127]
-    )
-    
+    let xyuv = new Int8Array([
+        //position and texture coordinate for 2 triangles
+        -128,
+        127,
+        0,
+        127,
+        -128,
+        -128,
+        0,
+        0,
+        127,
+        -128,
+        127,
+        0,
+        -128,
+        127,
+        0,
+        127,
+        127,
+        -128,
+        127,
+        0,
+        127,
+        127,
+        127,
+        127,
+    ])
+
     gl.useProgram(program)
     gl.bindVertexArray(shader.vao)
     gl.bindBuffer(gl.ARRAY_BUFFER, buffers.XYUV)
@@ -143,7 +159,8 @@ const initPostShader = gl => {
     gl.enableVertexAttribArray(attr.position)
     gl.enableVertexAttribArray(attr.uv)
 
-    gl.bindTexture(gl.TEXTURE_2D, buffers.texture);
+    gl.activeTexture(gl.TEXTURE0 + 0)
+    gl.bindTexture(gl.TEXTURE_2D, buffers.texture)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
@@ -159,14 +176,20 @@ const initPostShader = gl => {
         gl.UNSIGNED_BYTE,
         null
     )
+    gl.uniform1i(shader.uniforms.texture, 0)
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, shader.framebuffer)
-	gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, buffers.texture, 0)
-	if(gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE)
-        console.log("ERROR::FRAMEBUFFER:: Framebuffer is not complete!")
+    gl.framebufferTexture2D(
+        gl.FRAMEBUFFER,
+        gl.COLOR_ATTACHMENT0,
+        gl.TEXTURE_2D,
+        buffers.texture,
+        0
+    )
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE)
+        console.log('ERROR::FRAMEBUFFER:: Framebuffer is not complete!')
     return shader
 }
-
 
 class SymbolArtDrawer {
     constructor(canvas) {
@@ -227,20 +250,26 @@ class SymbolArtDrawer {
     }
     draw(n) {
         let gl = this.gl
-        
+
         gl.useProgram(this.shaderProgram.program)
         gl.bindVertexArray(this.shaderProgram.vao)
-        gl.bindFramebuffer(gl.FRAMEBUFFER, this.postProcessingProgram.framebuffer)
+        gl.bindFramebuffer(
+            gl.FRAMEBUFFER,
+            this.postProcessingProgram.framebuffer
+        )
         gl.bindTexture(gl.TEXTURE_2D, this.shaderProgram.buffers.texture)
         gl.viewport(0, 0, 1024, 512)
         gl.clearColor(0, 0, 0, 0)
         gl.clear(gl.COLOR_BUFFER_BIT)
         gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, 0)
-        
+
         gl.useProgram(this.postProcessingProgram.program)
         gl.bindVertexArray(this.postProcessingProgram.vao)
         gl.bindFramebuffer(gl.FRAMEBUFFER, null)
-        gl.bindTexture(gl.TEXTURE_2D, this.postProcessingProgram.buffers.texture)
+        gl.bindTexture(
+            gl.TEXTURE_2D,
+            this.postProcessingProgram.buffers.texture
+        )
         gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight)
         gl.clear(gl.COLOR_BUFFER_BIT)
         gl.drawArrays(gl.TRIANGLES, 0, 6)
