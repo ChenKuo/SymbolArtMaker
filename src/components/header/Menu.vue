@@ -4,6 +4,7 @@
 
 <script>
 import DropdownMenu from './dropDown/DropdownMenu.vue'
+import convert from 'xml-js'
 
 export default {
     name: 'Menu',
@@ -43,10 +44,24 @@ export default {
     methods: {
         onOption(value){
             switch(value){
-                case 'File/import/saml':
-                    
-                    break;
+                case 'File/import/saml': {
+                    const x = document.createElement("INPUT")
+                    x.setAttribute("type", "file")
+                    x.click()
+                    x.onchange = ()=>{
+                        const reader = new FileReader()
+                        reader.onload = (e)=>this.loadSAR(e.target.result)
+                        reader.readAsText(x.files[0])
+                    }
+                    break
+                }
             }
+        },
+        loadSAR(sar){
+            let options = {compact: true, ignoreDeclaration: true}
+            let symbolArt = convert.xml2js(sar,options).sa
+            console.log(symbolArt)
+            this.$store.commit('loadSymbolArt', symbolArt)
         }
     }
 }

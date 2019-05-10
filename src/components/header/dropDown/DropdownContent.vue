@@ -4,6 +4,7 @@
             :key="option.value||option"
             v-on:click.stop="onOptionClicked(option)"
             class="dropdown_item"
+            :class="{active: optionOpen===option.value}"
         >
             <a> {{option.value||option}} </a>
             <a v-if="option.options">&#x23F5;</a>
@@ -60,7 +61,7 @@ export default {
     z-index: 1;
     box-shadow: 4px 4px 4px 0px rgba(0,0,0,0.2);
     width: 200px;
-    background-color: #ccc;
+    background-color: #ddd;
     display: flex;
     flex-direction: column;
 }
@@ -81,5 +82,10 @@ export default {
     left: 200px;
     top: 0;
 }
+ </style>
+ <style scoped>
+ .active{
+     background-color: #bbb;
+ }
  </style>
  

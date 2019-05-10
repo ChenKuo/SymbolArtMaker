@@ -6,12 +6,15 @@ import post_fs from './shader/postprocessing.fs'
 const MAX_LAYER_LEN = 360
 
 const initWebgl = canvas => {
-    let gl = canvas.getContext('webgl2', { alpha: true })
+    let gl = canvas.getContext('webgl2', {
+        alpha: true,
+        premultipliedAlpha: true,
+    })
     if (gl) {
         gl.clearColor(0.0, 0.0, 0.0, 0.0)
-        gl.disable(gl.DEPTH_TEST)
         gl.enable(gl.BLEND)
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+        gl.blendEquation(gl.FUNC_ADD)
+
         gl.clear(gl.COLOR_BUFFER_BIT)
     }
     return gl
@@ -250,7 +253,6 @@ class SymbolArtDrawer {
     }
     draw(n) {
         let gl = this.gl
-
         gl.useProgram(this.shaderProgram.program)
         gl.bindVertexArray(this.shaderProgram.vao)
         gl.bindFramebuffer(
@@ -261,8 +263,13 @@ class SymbolArtDrawer {
         gl.viewport(0, 0, 1024, 512)
         gl.clearColor(0, 0, 0, 0)
         gl.clear(gl.COLOR_BUFFER_BIT)
+        gl.blendFuncSeparate(
+            gl.SRC_ALPHA,
+            gl.ONE_MINUS_SRC_ALPHA,
+            gl.ONE,
+            gl.ONE_MINUS_SRC_ALPHA
+        )
         gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, 0)
-
         gl.useProgram(this.postProcessingProgram.program)
         gl.bindVertexArray(this.postProcessingProgram.vao)
         gl.bindFramebuffer(gl.FRAMEBUFFER, null)
@@ -272,6 +279,12 @@ class SymbolArtDrawer {
         )
         gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight)
         gl.clear(gl.COLOR_BUFFER_BIT)
+        gl.blendFuncSeparate(
+            gl.ONE,
+            gl.ONE_MINUS_SRC_ALPHA,
+            gl.SRC_ALPHA,
+            gl.ONE_MINUS_SRC_ALPHA
+        )
         gl.drawArrays(gl.TRIANGLES, 0, 6)
     }
 }

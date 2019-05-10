@@ -1,7 +1,14 @@
 <template>
     <div class="menu" v-on:click.stop.prevent="">
-        <div v-for="menuItem in menu" :key="menuItem.value">
-            <button class="dropdown_btn" v-on:click="open=menuItem.value"> {{menuItem.value}} </button>
+        <div v-for="menuItem in menu" 
+            :key="menuItem.value"
+        >
+            <button class="dropdown_btn" 
+                v-on:click="open=menuItem.value"
+                :class="{active: open===menuItem.value}"
+            >
+                {{menuItem.value}} 
+            </button>
             <DropdownContent 
                 v-if="menuItem.options" 
                 :submenu="menuItem" 
@@ -35,6 +42,7 @@ export default {
         },
         propagateOptionClick(optionValue){
             this.$emit('optionclick',optionValue)
+            this.open = null
         }
     }
 }
@@ -54,10 +62,19 @@ export default {
     border: none;
     margin: 0;
     height: 100%;
+    background-color: transparent;
 }
 .dropdown_btn:hover {
     background-color: #bbb;
 }
+.dropdown_btn:active {
+    background-color: #aaa;
+}
+</style>
 
+<style scoped>
+.active{
+    background-color: #aaa;
+}
 </style>
 
