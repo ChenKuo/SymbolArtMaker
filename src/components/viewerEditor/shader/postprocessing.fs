@@ -1,9 +1,11 @@
-#version 330 core
-out vec4 FragColor;
-  
-in vec2 TexCoords;
+#version 300 es
+precision mediump float;
 
-uniform sampler2D screenTexture;
+in vec2 TexCoord;
+
+uniform sampler2D frame;  
+
+out vec4 FragColor;
 
 vec4 applyBSC(vec4 Color, float brightness, float saturation, float contrast)
 {
@@ -16,6 +18,6 @@ vec4 applyBSC(vec4 Color, float brightness, float saturation, float contrast)
 
 void main()
 { 
-    vec4 color = texture(screenTexture, TexCoords);
+    vec4 color = texture(frame, TexCoord);
     FragColor = applyBSC(color, 0.7, 0.9, 2.12);
 }
