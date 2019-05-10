@@ -1,11 +1,11 @@
 <template>
     <div class="header">
         <div>
-            <Menu/>
-            <SaveMessage/>
+            <Menu />
+            <SaveMessage />
         </div>
-            <SymbolArtTitle/>
-            <Logo/>
+        <SymbolArtTitle />
+        <Logo />
     </div>
 </template>
 
@@ -21,8 +21,8 @@ export default {
         Menu,
         SaveMessage,
         SymbolArtTitle,
-        Logo
-    }
+        Logo,
+    },
 }
 </script>
 
@@ -34,10 +34,9 @@ export default {
     justify-content: space-between;
     align-items: center;
 }
-.header>div{
+.header > div {
     flex: 1 1;
     display: flex;
     align-items: center;
 }
-
 </style>

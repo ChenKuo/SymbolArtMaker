@@ -188,8 +188,8 @@ export default new Vuex.Store({
 })
 
 const convertType = t => {
-    t= +t + 1
-    if (241 <= t && t <= 292) return t - 241 
+    t = +t + 1
+    if (241 <= t && t <= 292) return t - 241
     if (321 <= t && t <= 359) return t - 321 + 52
     if (401 <= t && t <= 439) return t - 401 + 91
     if (481 <= t && t <= 517) return t - 481 + 130

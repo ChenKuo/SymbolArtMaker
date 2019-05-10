@@ -6,12 +6,12 @@
 
 <script>
 export default {
-    name: 'SymbolArtTitle'
+    name: 'SymbolArtTitle',
 }
 </script>
 
 <style>
-#sa-title{
+#sa-title {
     justify-content: center;
 }
 </style>

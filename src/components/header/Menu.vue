@@ -1,5 +1,5 @@
 <template>
-    <DropdownMenu :menu="menulist" id="menu" v-on:optionclick="onOption"/>
+    <DropdownMenu :menu="menulist" id="menu" v-on:optionclick="onOption" />
 </template>
 
 <script>
@@ -9,69 +9,64 @@ import convert from 'xml-js'
 export default {
     name: 'Menu',
     components: {
-        DropdownMenu
+        DropdownMenu,
     },
-    data(){
-        return{
+    data() {
+        return {
             menulist: [
                 {
                     value: 'File',
                     options: [
-                        {value: 'Import from', options: ['.saml file']},
-                        'more will be added'
-                    ]
+                        { value: 'Import from', options: ['.saml file'] },
+                        'more will be added',
+                    ],
                 },
                 {
                     value: 'Edit',
-                    options: ['edit option']
+                    options: ['edit option'],
                 },
                 {
                     value: 'View',
-                    options: ['view option']
+                    options: ['view option'],
                 },
                 {
                     value: 'Generator',
-                    options: ['gen option']
+                    options: ['gen option'],
                 },
                 {
                     value: 'Help',
-                    options: ['sorry cant halp u']
+                    options: ['sorry cant halp u'],
                 },
-            ]
+            ],
         }
-
     },
     methods: {
-        onOption(value){
-            switch(value){
+        onOption(value) {
+            switch (value) {
                 case 'File/Import from/.saml file': {
-                    const x = document.createElement("INPUT")
-                    x.setAttribute("type", "file")
+                    const x = document.createElement('INPUT')
+                    x.setAttribute('type', 'file')
                     x.click()
-                    x.onchange = ()=>{
+                    x.onchange = () => {
                         const reader = new FileReader()
-                        reader.onload = (e)=>this.loadSAR(e.target.result)
+                        reader.onload = e => this.loadSAR(e.target.result)
                         reader.readAsText(x.files[0])
                     }
                     break
                 }
             }
         },
-        loadSAR(sar){
-            let options = {compact: true, ignoreDeclaration: true}
-            let symbolArt = convert.xml2js(sar,options).sa
-            console.log(symbolArt)
+        loadSAR(sar) {
+            let options = { compact: true, ignoreDeclaration: true }
+            let symbolArt = convert.xml2js(sar, options).sa
             this.$store.commit('loadSymbolArt', symbolArt)
-        }
-    }
+        },
+    },
 }
 </script>
 
 <style>
-
-#menu{
+#menu {
     height: 100%;
 }
-
 </style>
-

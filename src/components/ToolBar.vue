@@ -1,36 +1,64 @@
 <template>
     <div class="toolbar">
         <div class="edit_buttons">
-            <img v-on:click="addLayer()" src="./../assets/add.svg">
-            <img src="./../assets/group.svg">
-            <img src="./../assets/undo.svg">
-            <img src="./../assets/redo.svg">
-            <img src="./../assets/trash.svg">
+            <AddImg v-on:click="addLayer()" class="logo" />
+            <GroupImg class="logo" />
+            <UndoImg class="logo" />
+            <RedoImg class="logo" />
+            <DeleteImg class="logo" />
         </div>
         <div class="view_buttons">
-            <img src="./../assets/picture.svg">
-            <img src="./../assets/opacity.svg">
-            <img src="./../assets/cube.svg">
-            <img src="./../assets/square.svg">
-            <img src="./../assets/zoomout.svg">
-            <img src="./../assets/zoomin.svg">
+            <PictureImg class="logo" />
+            <OpacityImg class="logo" />
+            <CubeImg class="logo" />
+            <SquareImg class="logo" />
+            <ZoomoutImg class="logo" />
+            <ZoominImg class="logo" />
         </div>
         <div class="gen_buttons">
-            <img src="./../assets/bot.svg">
-            <img src="./../assets/setting.svg">
+            <BotImg class="logo" />
+            <SettingImg class="logo" />
         </div>
-
     </div>
 </template>
 
 <script>
+import AddImg from './../assets/add.svg'
+import GroupImg from './../assets/group.svg'
+import UndoImg from './../assets/undo.svg'
+import RedoImg from './../assets/redo.svg'
+import DeleteImg from './../assets/trash.svg'
+import PictureImg from './../assets/picture.svg'
+import OpacityImg from './../assets/opacity.svg'
+import CubeImg from './../assets/cube.svg'
+import SquareImg from './../assets/square.svg'
+import ZoomoutImg from './../assets/zoomout.svg'
+import ZoominImg from './../assets/zoomin.svg'
+import BotImg from './../assets/bot.svg'
+import SettingImg from './../assets/setting.svg'
+
 export default {
     name: 'ToolBar',
+    components: {
+        AddImg,
+        GroupImg,
+        UndoImg,
+        RedoImg,
+        DeleteImg,
+        PictureImg,
+        OpacityImg,
+        CubeImg,
+        SquareImg,
+        ZoomoutImg,
+        ZoominImg,
+        BotImg,
+        SettingImg,
+    },
     methods: {
-        addLayer: function(){
+        addLayer: function() {
             this.$store.commit('addLayer')
-        }
-    }
+        },
+    },
 }
 </script>
 
@@ -41,7 +69,7 @@ export default {
     display: flex;
     align-items: center;
 }
-.toolbar>div {
+.toolbar > div {
     border-right: 3px solid #bbbbbb;
     padding-left: 10px;
     padding-right: 10px;
@@ -50,18 +78,15 @@ export default {
     align-items: center;
 }
 
-.toolbar img {
+.logo {
     width: 30px;
     height: 30px;
     margin-right: 10px;
     opacity: 0.6;
 }
-.toolbar img:hover{
+.logo:hover {
     opacity: 1;
 }
 </style>
 
-<style scoped>
-
-</style>
-
+<style scoped></style>

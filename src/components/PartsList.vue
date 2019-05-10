@@ -1,6 +1,6 @@
 <template>
     <div class="parts_list">
-        <LayerTab v-for="id in children" :key="id" :id="id"/>
+        <LayerTab v-for="id in children" :key="id" :id="id" />
     </div>
 </template>
 
@@ -9,16 +9,14 @@ import LayerTab from './partsList/LayerTab.vue'
 export default {
     name: 'PartsList',
     components: {
-        LayerTab
+        LayerTab,
     },
     computed: {
-        children: function(){
-            return this.$store.state.treeData.map(x=>x.id)
-        }
+        children: function() {
+            return this.$store.state.treeData.map(x => x.id)
+        },
     },
-    methods: {
-
-    }
+    methods: {},
 }
 </script>
 

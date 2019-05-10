@@ -6,13 +6,13 @@
 
 <script>
 export default {
-    name: 'SaveMessage'
+    name: 'SaveMessage',
 }
 </script>
 
 <style>
 .save_message {
-    background-color:rgb(255, 255, 123);
+    background-color: rgb(255, 255, 123);
     border: 1px solid orange;
     border-radius: 5px;
     padding-left: 2px;

@@ -1,18 +1,17 @@
 <template>
     <div class="menu" v-on:click.stop.prevent="">
-        <div v-for="menuItem in menu" 
-            :key="menuItem.value"
-        >
-            <button class="dropdown_btn" 
-                v-on:click="open=menuItem.value"
-                :class="{active: open===menuItem.value}"
+        <div v-for="menuItem in menu" :key="menuItem.value">
+            <button
+                class="dropdown_btn"
+                v-on:click="open = menuItem.value"
+                :class="{ active: open === menuItem.value }"
             >
-                {{menuItem.value}} 
+                {{ menuItem.value }}
             </button>
-            <DropdownContent 
-                v-if="menuItem.options" 
-                :submenu="menuItem" 
-                :open="open===menuItem.value"
+            <DropdownContent
+                v-if="menuItem.options"
+                :submenu="menuItem"
+                :open="open === menuItem.value"
                 v-on:optionclick="propagateOptionClick"
             />
         </div>
@@ -22,29 +21,29 @@
 <script>
 import DropdownContent from './DropdownContent.vue'
 export default {
-    mounted(){
-        document.body.addEventListener('click',this.close)
+    mounted() {
+        document.body.addEventListener('click', this.close)
     },
     components: {
-        DropdownContent
+        DropdownContent,
     },
     props: {
         menu: Array,
     },
-    data(){
+    data() {
         return {
-            open: null
+            open: null,
         }
     },
     methods: {
-        close(){
+        close() {
             this.open = null
         },
-        propagateOptionClick(optionValue){
-            this.$emit('optionclick',optionValue)
+        propagateOptionClick(optionValue) {
+            this.$emit('optionclick', optionValue)
             this.open = null
-        }
-    }
+        },
+    },
 }
 </script>
 
@@ -73,8 +72,7 @@ export default {
 </style>
 
 <style scoped>
-.active{
+.active {
     background-color: #aaa;
 }
 </style>
-
