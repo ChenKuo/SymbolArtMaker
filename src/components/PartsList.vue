@@ -13,7 +13,8 @@ export default {
     },
     computed: {
         children: function() {
-            return this.$store.state.treeData.map(x => x.id)
+            // TODO: implement this properly when group is supported
+            return this.$store.state.treeData.map(x => x.id).reverse()
         },
     },
     methods: {},

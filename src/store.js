@@ -65,7 +65,7 @@ const state = {
     parts: {}, //all layers
     treeData: [], //tree structure of layers and groups
     selected: [], //selected layers and groups
-    requestRebuildList: null,
+    layers: null,
     requestUpdateColorLayers: [],
     requestUpdateVertLayers: [],
     requestUpdateTypeLayers: [],
@@ -116,7 +116,7 @@ const mutations = {
             state.parts[id].index = index
         }
         DFT(0, state.treeData, updateList)
-        state.requestRebuildList = list
+        state.layers = list
         state.selected = []
     },
     addLayer(state) {
@@ -132,7 +132,7 @@ const mutations = {
             state.parts[id].index = index
         }
         DFT(0, state.treeData, updateList)
-        state.requestRebuildList = list
+        state.layers = list
     },
     select(state, id) {
         for (let i = 0; i < state.selected.length; i++) {
@@ -159,8 +159,9 @@ const mutations = {
         // eslint-disable-next-line prettier/prettier
         state.requestUpdateVertLayers = union(state.requestUpdateVertLayers, [id])
     },
-    clearRebuildListRequest(state) {
-        state.requestRebuildList = null
+    clearRebuildListRequest() {
+        // do nothing, let the list stay
+        //state.layers = null
     },
     clearUpdateColorRequest(state) {
         state.requestUpdateColorLayers = []

@@ -33,7 +33,7 @@ export default {
     },
     computed: {
         rebuildLayers() {
-            return this.$store.state.requestRebuildList
+            return this.$store.state.layers
         },
         updateColor() {
             return this.$store.state.requestUpdateColorLayers
@@ -91,7 +91,7 @@ export default {
             this.renderer.updateColors(this.colors)
             this.renderer.updateVertices(this.vertices)
             this.render()
-            this.$store.commit('clearRebuildListRequest')
+            //this.$store.commit('clearRebuildListRequest')
         },
         updateColorandRender() {
             let layersToUpdate = this.$store.state.requestUpdateColorLayers

@@ -45,6 +45,13 @@ export default {
             return this.$store.state.shapeList[i].url
         },
     },
+    watch:{
+        selected(isSelected){
+            if(isSelected){
+                this.$el.scrollIntoView({behavior:'smooth', block:'nearest'})
+            }
+        }
+    },
     methods: {
         select() {
             this.$store.commit('select', this.id)

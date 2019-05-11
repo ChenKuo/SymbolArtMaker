@@ -1,12 +1,13 @@
 <template>
     <svg
         xmlns="http://www.w3.org/2000/svg"
-        v-show="layer"
+        
         v-on:mousedown="onDragStart"
         viewBox="-127 -127 255 255"
         transform="scale(1, 1)"
+        v-on:click.stop.prevent="selectLayerHit"
     >
-        <g>
+        <g v-on:click.stop.prevent v-show="layer">
             <polygon
                 :points="
                     [
@@ -30,8 +31,8 @@
                 :x2="v.rtx"
                 :y2="v.rty"
                 vert="lt rt"
-                stroke-width="0.5"
-                stroke="black"
+                class ="line"
+                
             />
             <line
                 :x1="v.rtx"
@@ -39,8 +40,7 @@
                 :x2="v.rbx"
                 :y2="v.rby"
                 vert="rt rb"
-                stroke-width="0.5"
-                stroke="black"
+                class ="line"
             />
             <line
                 :x1="v.rbx"
@@ -48,8 +48,7 @@
                 :x2="v.lbx"
                 :y2="v.lby"
                 vert="rb lb"
-                stroke-width="0.5"
-                stroke="black"
+                class ="line"
             />
             <line
                 :x1="v.lbx"
@@ -57,14 +56,13 @@
                 :x2="v.ltx"
                 :y2="v.lty"
                 vert="lb lt"
-                stroke-width="0.5"
-                stroke="black"
+                class ="line"
             />
 
-            <circle :cx="v.ltx" :cy="v.lty" r="1" class="point" vert="lt" />
-            <circle :cx="v.rtx" :cy="v.rty" r="1" class="point" vert="rt" />
-            <circle :cx="v.rbx" :cy="v.rby" r="1" class="point" vert="rb" />
-            <circle :cx="v.lbx" :cy="v.lby" r="1" class="point" vert="lb" />
+            <circle :cx="v.ltx" :cy="v.lty" class="point" vert="lt" />
+            <circle :cx="v.rtx" :cy="v.rty" class="point" vert="rt" />
+            <circle :cx="v.rbx" :cy="v.rby" class="point" vert="rb" />
+            <circle :cx="v.lbx" :cy="v.lby" class="point" vert="lb" />
         </g>
     </svg>
 </template>
@@ -96,6 +94,9 @@ export default {
         v() {
             return this.layer || {}
         },
+        layers() {
+            return this.$store.state.layers
+        }
     },
     methods: {
         onDragStart(e) {
@@ -136,8 +137,43 @@ export default {
             document.removeEventListener('mousemove', this.onDragging, false)
             document.removeEventListener('mouseup', this.onDragEnd, false)
         },
+        selectLayerHit(e){
+            let clientRect = this.$el.getBoundingClientRect()
+            let x = (e.pageX - clientRect.left - 512)*(256/1024)
+            let y = (e.pageY - clientRect.top -512)*(256/1024)
+            for(let i =0; i<this.layers.length; i++){
+                //check if x,y lies inside the layer
+                let id = this.layers[i]
+                let l = this.$store.state.parts[id]
+                if(pointInTriangle(x, y, l.lbx, l.lby, l.ltx, l.lty, l.rbx, l.rby)
+                    ||pointInTriangle(x, y, l.rbx, l.rby, l.ltx, l.lty, l.rtx, l.rty)){
+                        this.$store.commit('select', id)
+                    }
+            }
+        }
     },
 }
+
+const pointInTriangle = (px, py, p0x, p0y, p1x, p1y, p2x, p2y) => {
+    let Area = 0.5 *(-p1y*p2x + p0y*(-p1x + p2x) + p0x*(p1y - p2y) + p1x*p2y)
+    let sign = Math.sign(Area)
+    let s = (p0y*p2x - p0x*p2y + (p2y - p0y)*px + (p0x - p2x)*py) * sign
+    let t = (p0x*p1y - p0y*p1x + (p0y - p1y)*px + (p1x - p0x)*py) * sign
+     return s>0 && t>0 && (s+t) < 2*Area*sign
+}
+
 </script>
 
-<style></style>
+<style>
+.point{
+    r: 1;
+    stroke: white;
+    stroke-width: 0.5;
+    fill: black;
+}
+.line{
+    stroke-width: 0.5;
+    stroke: black;
+    stroke-dasharray: 1 1;
+}
+</style>

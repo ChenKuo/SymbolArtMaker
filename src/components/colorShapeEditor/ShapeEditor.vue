@@ -3,6 +3,7 @@
         <div
             class="shape_thumb"
             v-for="shape in shapeList"
+            ref="shapes"
             :key="shape.type"
             :class="{ active: shape.type === layerShape }"
             v-on:click="updateShape(shape.type)"
@@ -31,6 +32,15 @@ export default {
         layerShape: function() {
             return this.layer ? this.layer.type : null
         },
+    },
+    watch:{
+        layerShape(shape){
+            if(shape == null) return
+            if(shape<512)
+                this.$refs.shapes[shape].scrollIntoView()
+            else
+                this.$refs.shapes[shape-512 + 325].scrollIntoView()
+        }
     },
     methods: {
         updateShape(type) {
