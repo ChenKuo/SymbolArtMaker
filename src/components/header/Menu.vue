@@ -23,15 +23,15 @@ export default {
                 },
                 {
                     value: 'Edit',
-                    options: ['edit option'],
+                    options: ['not implemented'],
                 },
                 {
                     value: 'View',
-                    options: ['view option'],
+                    options: ['not implemented'],
                 },
                 {
                     value: 'Generator',
-                    options: ['gen option'],
+                    options: ['not implemented'],
                 },
                 {
                     value: 'Help',

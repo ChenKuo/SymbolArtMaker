@@ -1,11 +1,11 @@
 <template>
     <div class="toolbar">
         <div class="edit_buttons">
-            <AddImg v-on:click="addLayer()" class="logo" />
+            <AddImg class="logo" v-on:click="addLayer()" />
             <GroupImg class="logo" />
             <UndoImg class="logo" />
             <RedoImg class="logo" />
-            <DeleteImg class="logo" />
+            <DeleteImg class="logo" v-on:click="deleteLayer()" />
         </div>
         <div class="view_buttons">
             <PictureImg class="logo" />
@@ -55,9 +55,14 @@ export default {
         SettingImg,
     },
     methods: {
-        addLayer: function() {
+        addLayer() {
             this.$store.commit('addLayer')
         },
+        deleteLayer(){
+            let selected = this.$store.state.selected
+            if(selected.length === 1)
+                this.$store.commit('deleteLayer', selected[0])
+        }
     },
 }
 </script>

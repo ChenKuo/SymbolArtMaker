@@ -5,9 +5,9 @@
         v-on:mousedown="onDragStart"
         viewBox="-127 -127 255 255"
         transform="scale(1, 1)"
-        v-on:click.stop.prevent="selectLayerHit"
+        v-on:click="selectLayerHit"
     >
-        <g v-on:click.stop.prevent v-show="layer">
+        <g v-show="layer">
             <polygon
                 :points="
                     [
@@ -138,6 +138,7 @@ export default {
             document.removeEventListener('mouseup', this.onDragEnd, false)
         },
         selectLayerHit(e){
+            if(!this.layers) return
             let clientRect = this.$el.getBoundingClientRect()
             let x = (e.pageX - clientRect.left - 512)*(256/1024)
             let y = (e.pageY - clientRect.top -512)*(256/1024)

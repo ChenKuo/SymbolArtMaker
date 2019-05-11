@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import union from 'lodash/union'
+import { union, without } from 'lodash'
 
 Vue.use(Vuex)
 
@@ -60,6 +60,17 @@ const DFT = (index, children, callback) => {
     return index
 }
 
+const createLayerList = state => {
+    let list = []
+    list.length = state.numberOfLayers
+    const updateList = (id, index) => {
+        list[index] = id
+        state.parts[id].index = index
+    }
+    DFT(0, state.treeData, updateList)
+    return list
+}
+
 //state of a symbol art
 const state = {
     parts: {}, //all layers
@@ -109,14 +120,7 @@ const mutations = {
         state.numberOfLayers = sa.layer.length
         state.parts = parts
         state.treeData = treedata
-        let list = []
-        list.length = state.numberOfLayers
-        const updateList = (id, index) => {
-            list[index] = id
-            state.parts[id].index = index
-        }
-        DFT(0, state.treeData, updateList)
-        state.layers = list
+        state.layers = createLayerList(state)
         state.selected = []
     },
     addLayer(state) {
@@ -125,14 +129,15 @@ const mutations = {
         Vue.set(state.parts, id, l)
         state.treeData.splice(0, 0, { id })
         state.numberOfLayers++
-        let list = []
-        list.length = state.numberOfLayers
-        const updateList = (id, index) => {
-            list[index] = id
-            state.parts[id].index = index
-        }
-        DFT(0, state.treeData, updateList)
-        state.layers = list
+        state.layers = createLayerList(state)
+    },
+    deleteLayer(state, id){
+        let index = state.parts[id].index
+        state.treeData.splice(index, 1)
+        state.numberOfLayers--
+        state.layers = createLayerList(state)
+        Vue.delete(state.parts, id)
+        state.selected = without(state.selected, id)
     },
     select(state, id) {
         for (let i = 0; i < state.selected.length; i++) {

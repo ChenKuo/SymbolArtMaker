@@ -1,6 +1,6 @@
 <template>
     <div class="footer">
-        Welcome to Symbol Art Maker. The project is under construction.
+        Welcome to Symbol Art Maker. The project is under construction. Many features are not implemented.
     </div>
 </template>
 

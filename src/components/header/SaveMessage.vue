@@ -1,12 +1,22 @@
 <template>
-    <div class="save_message">
-        save message
+    <div class="save_message" v-on:click="onClickSave">
+        {{message}}
     </div>
 </template>
 
 <script>
 export default {
     name: 'SaveMessage',
+    data(){
+        return{
+            message: 'save changes'
+        }
+    },
+    methods: {
+        onClickSave(){
+            this.message = "can't save yet"
+        }
+    }
 }
 </script>
 
