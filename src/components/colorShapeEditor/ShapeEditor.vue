@@ -37,9 +37,9 @@ export default {
         layerShape(shape){
             if(shape == null) return
             if(shape<512)
-                this.$refs.shapes[shape].scrollIntoView()
+                this.$refs.shapes[shape].scrollIntoView({block:'nearest'})
             else
-                this.$refs.shapes[shape-512 + 325].scrollIntoView()
+                this.$refs.shapes[shape-512 + 325].scrollIntoView({block:'nearest'})
         }
     },
     methods: {

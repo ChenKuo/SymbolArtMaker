@@ -32,7 +32,7 @@ export default {
         }
     },
     computed: {
-        rebuildLayers() {
+        layers() {
             return this.$store.state.layers
         },
         updateColor() {
@@ -46,7 +46,7 @@ export default {
         },
     },
     watch: {
-        rebuildLayers(list) {
+        layers(list) {
             if (this.readyToRender && list) {
                 requestAnimationFrame(this.rebuildListandRender)
                 this.readyToRender = false
@@ -73,7 +73,7 @@ export default {
     },
     methods: {
         rebuildListandRender() {
-            let list = this.rebuildLayers
+            let list = this.layers
             for (let i = 0; i < list.length; i++) {
                 let l = this.$store.state.parts[list[i]]
                 this.vertices.set(
@@ -132,7 +132,7 @@ export default {
         },
         render() {
             this.resize()
-            this.renderer.draw(this.$store.state.numberOfLayers)
+            this.renderer.draw(this.layers.length)
             this.readyToRender = true
         },
         resize() {
@@ -229,7 +229,7 @@ export default {
             this.renderer.updateTypes(this.types)
             this.renderer.updateColors(this.colors)
             this.renderer.updateVertices(this.vertices)
-            this.render()
+            this.renderer.draw(0)
             this.$store.commit('setShapeList', { shapeList })
         },
     },

@@ -2,12 +2,13 @@
     <svg
         xmlns="http://www.w3.org/2000/svg"
         
-        v-on:mousedown="onDragStart"
+        
         viewBox="-127 -127 255 255"
         transform="scale(1, 1)"
-        v-on:click="selectLayerHit"
+        v-on:mousedown="selectLayerHit"
     >
-        <g v-show="layer">
+        <g v-show="layer"
+            v-on:mousedown="onDragStart">
             <polygon
                 :points="
                     [
@@ -72,6 +73,7 @@ export default {
     name: 'VertexEditor',
     data() {
         return {
+            editId: null,
             dragStartX: null, //mouse position before drag
             dragStartY: null,
             verticesBeforeDrag: null, //copy of the vertices before dragging
@@ -102,7 +104,7 @@ export default {
         onDragStart(e) {
             let vert = e.srcElement.getAttribute('vert')
             if (!vert) return
-
+            this.editId = this.layerId
             this.dragVertex = vert.split(' ')
             this.dragStartX = e.x
             this.dragStartY = e.y
@@ -125,7 +127,7 @@ export default {
                             this.verticesBeforeDrag[vertName + 'y'] + moveY
                     }
                     this.$store.commit('editLayerVertices', {
-                        id: this.layerId,
+                        id: this.editId,
                         vertices: changedVertices,
                     })
                     this.updateReady = true
@@ -142,13 +144,14 @@ export default {
             let clientRect = this.$el.getBoundingClientRect()
             let x = (e.pageX - clientRect.left - 512)*(256/1024)
             let y = (e.pageY - clientRect.top -512)*(256/1024)
-            for(let i =0; i<this.layers.length; i++){
+            for(let i =this.layers.length-1; i>=0; i--){
                 //check if x,y lies inside the layer
                 let id = this.layers[i]
                 let l = this.$store.state.parts[id]
                 if(pointInTriangle(x, y, l.lbx, l.lby, l.ltx, l.lty, l.rbx, l.rby)
                     ||pointInTriangle(x, y, l.rbx, l.rby, l.ltx, l.lty, l.rtx, l.rty)){
                         this.$store.commit('select', id)
+                        return
                     }
             }
         }

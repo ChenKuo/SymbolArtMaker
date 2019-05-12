@@ -1,11 +1,11 @@
 <template>
     <div class="toolbar">
         <div class="edit_buttons">
-            <AddImg class="logo" v-on:click="addLayer()" />
+            <AddImg class="logo" v-on:click="addLayer" />
             <GroupImg class="logo" />
-            <UndoImg class="logo" />
-            <RedoImg class="logo" />
-            <DeleteImg class="logo" v-on:click="deleteLayer()" />
+            <UndoImg class="logo" v-on:click="undo"/>
+            <RedoImg class="logo" v-on:click="redo"/>
+            <DeleteImg class="logo" v-on:click="deleteLayer" />
         </div>
         <div class="view_buttons">
             <PictureImg class="logo" />
@@ -62,6 +62,12 @@ export default {
             let selected = this.$store.state.selected
             if(selected.length === 1)
                 this.$store.commit('deleteLayer', selected[0])
+        },
+        undo(){
+            this.$store.commit('undo')
+        },
+        redo(){
+            this.$store.commit('redo')
         }
     },
 }
