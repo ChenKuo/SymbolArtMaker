@@ -59,7 +59,7 @@ export default {
             this.$store.commit('addLayer')
         },
         deleteLayer(){
-            let selected = this.$store.state.selected
+            let selected = this.$store.getters.selected
             if(selected.length === 1)
                 this.$store.commit('deleteLayer', selected[0])
         },

@@ -45,7 +45,7 @@ const newLayer = (
     rbx: Number(rbx),
     rby: Number(rby),
     name: String(name),
-    selected: false,
+    //selected: false,
     index: null,
 })
 
@@ -78,7 +78,7 @@ const createLayerList = state => {
 const state = {
     parts: {}, //all layers
     treeData: [], //tree structure of layers and groups
-    selected: [], //selected layers and groups
+    selected: {}, //selected layers and groups
     layers: null,
     //numberOfLayers: 0,
     requestUpdateColorLayers: [],
@@ -128,7 +128,7 @@ const mutations = {
         state.parts = parts
         state.treeData = treedata
         state.layers = createLayerList(state)
-        state.selected = []
+        state.selected = {}
         state.undoStack = []
         state.redoStack = []
     },
@@ -156,14 +156,11 @@ const mutations = {
         //state.numberOfLayers--
         state.layers = createLayerList(state)
         Vue.delete(state.parts, id)
-        state.selected = without(state.selected, id)
+        Vue.delete(state.selected, id)
     },
     select(state, id) {
-        for (let i = 0; i < state.selected.length; i++) {
-            state.parts[state.selected[i]].selected = false
-        }
-        state.selected = [id]
-        state.parts[id].selected = true
+        state.selected = {}
+        state.selected[id] = true
     },
     editLayerType(state, { id, type }) {
         let layer = state.parts[id]
@@ -246,8 +243,7 @@ const mutations = {
             // remove the parts
             for (let id in change.partsAdded) {
                 Vue.delete(state.parts, id)
-                state.selected = without(state.selected, id)
-                change.partsAdded[id].selected = false
+                Vue.delete(state.selected, id)
             }
         }
         if (change.partsRemoved) {
@@ -303,7 +299,7 @@ const mutations = {
             // re-remove the parts
             for (let id in change.partsRemoved) {
                 Vue.delete(state.parts, id)
-                state.selected = without(state.selected, id)
+                Vue.delete(state.selected, id)
             }
         }
         if (change.shapeEdit) {
@@ -336,7 +332,11 @@ const mutations = {
     },
 }
 
-const getters = {}
+const getters = {
+    selected(state){
+        return Object.keys(state.selected)
+    }
+}
 
 const actions = {}
 

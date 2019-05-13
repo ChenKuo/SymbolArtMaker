@@ -14,7 +14,7 @@ export default {
     props: { id: { type: Number, required: true } },
     computed: {
         selected() {
-            return this.part.selected
+            return this.$store.state.selected[this.id]
         },
         part() {
             return this.$store.state.parts[this.id]

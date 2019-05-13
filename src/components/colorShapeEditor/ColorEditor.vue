@@ -2,6 +2,7 @@
     <div class="color_editor">
         <color-picker
             :value="colorCode"
+            startColor="#ffffff"
             @color-change="updateColor"
             :disabled="!layer"
             :width="200"
@@ -62,8 +63,8 @@ export default {
     },
     computed: {
         id: function() {
-            let selected = this.$store.state.selected
-            if (selected.length === 1 && !selected[0].children)
+            let selected = this.$store.getters.selected
+            if (selected.length === 1 )
                 return selected[0]
             return null
         },
@@ -93,6 +94,7 @@ export default {
             if (!this.layer) {
                 return
             }
+            
             let r = parseInt(colorCode.substr(1, 2), 16)
             let g = parseInt(colorCode.substr(3, 2), 16)
             let b = parseInt(colorCode.substr(5, 2), 16)

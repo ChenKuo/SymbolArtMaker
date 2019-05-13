@@ -21,8 +21,8 @@ export default {
             return this.$store.state.shapeList
         },
         LayerId: function() {
-            let selected = this.$store.state.selected
-            if (selected.length === 1 && !selected[0].children)
+            let selected = this.$store.getters.selected
+            if (selected.length === 1)
                 return selected[0]
             return null
         },
