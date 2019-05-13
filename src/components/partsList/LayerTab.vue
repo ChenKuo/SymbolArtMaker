@@ -48,7 +48,7 @@ export default {
     watch:{
         selected(isSelected){
             if(isSelected){
-                this.$el.scrollIntoView({behavior:'smooth', block:'nearest'})
+                this.$el.scrollIntoView({ block:'nearest'})
             }
         }
     },

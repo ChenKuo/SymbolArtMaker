@@ -94,10 +94,8 @@ export default {
             if (!this.layer) {
                 return
             }
-            
-            let r = parseInt(colorCode.substr(1, 2), 16)
-            let g = parseInt(colorCode.substr(3, 2), 16)
-            let b = parseInt(colorCode.substr(5, 2), 16)
+            let [r, g, b] = colorCode.length === 7? [1, 3, 5].map(i => parseInt(colorCode.substring(i, i + 2), 16))
+                : [1, 2, 3].map(i => parseInt(colorCode.substring(i, i + 1), 16) * 17)
             let a = this.layer.a
             this.$store.commit('editLayerColor', {
                 id: this.id,

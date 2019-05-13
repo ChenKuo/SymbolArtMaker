@@ -5,10 +5,11 @@
         
         viewBox="-127 -127 255 255"
         transform="scale(1, 1)"
-        v-on:mousedown="selectLayerHit"
+        v-on:mousedown.self="selectLayerHit"
     >
         <g v-show="layer"
-            v-on:mousedown="onDragStart">
+            v-on:mousedown="onDragStart"
+            v-on:wheel.stop.prevent="selectNextLayerHit">
             <polygon
                 :points="
                     [
@@ -139,14 +140,16 @@ export default {
             document.removeEventListener('mousemove', this.onDragging, false)
             document.removeEventListener('mouseup', this.onDragEnd, false)
         },
-        selectLayerHit(e){
+        selectLayerHit(e, from=-1, dir = -1){
             if(!this.layers) return
             let clientRect = this.$el.getBoundingClientRect()
             let x = (e.pageX - clientRect.left - 512)*(256/1024)
             let y = (e.pageY - clientRect.top -512)*(256/1024)
-            for(let i =this.layers.length-1; i>=0; i--){
+            from = this.layers.length + from
+            for(let i =0; i<this.layers.length; i++){
                 //check if x,y lies inside the layer
-                let id = this.layers[i]
+                let j = (from + i*dir)%this.layers.length
+                let id = this.layers[j]
                 let l = this.$store.state.parts[id]
                 if(pointInTriangle(x, y, l.lbx, l.lby, l.ltx, l.lty, l.rbx, l.rby)
                     ||pointInTriangle(x, y, l.rbx, l.rby, l.ltx, l.lty, l.rtx, l.rty)){
@@ -154,6 +157,10 @@ export default {
                         return
                     }
             }
+        },
+        selectNextLayerHit(e){
+            let dir = - Math.sign(e.deltaY)
+            this.selectLayerHit(e,this.layer.index+dir, +dir)
         }
     },
 }
