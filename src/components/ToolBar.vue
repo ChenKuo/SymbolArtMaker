@@ -2,10 +2,10 @@
     <div class="toolbar">
         <div class="edit_buttons">
             <AddImg class="logo" v-on:click="addLayer" />
-            <GroupImg class="logo" />
+            <GroupImg class="logo" v-on:click="addGroup"/>
             <UndoImg class="logo" v-on:click="undo"/>
             <RedoImg class="logo" v-on:click="redo"/>
-            <DeleteImg class="logo" v-on:click="deleteLayer" />
+            <DeleteImg class="logo" v-on:click="deletePart" />
         </div>
         <div class="view_buttons">
             <PictureImg class="logo" />
@@ -54,14 +54,21 @@ export default {
         BotImg,
         SettingImg,
     },
+    computed: {
+        selected() {
+            return this.$store.getters.selected
+        }
+    },
     methods: {
         addLayer() {
             this.$store.commit('addLayer')
         },
-        deleteLayer(){
-            let selected = this.$store.getters.selected
-            if(selected.length === 1)
-                this.$store.commit('deleteLayer', selected[0])
+        addGroup() {
+            this.$store.commit('addGroup')
+        },
+        deletePart(){
+            if(this.selected.length === 1)
+                this.$store.commit('deleteLayer', this.selected[0])
         },
         undo(){
             this.$store.commit('undo')

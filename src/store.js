@@ -7,11 +7,13 @@ import clone from 'lodash/clone'
 
 Vue.use(Vuex)
 
-// this function generate a unique id
-const ID = (() => {
+// this function create a unique id generating function 
+// id = consecutive integers
+const IDGenerator = () => {
     let id = 0
     return () => id++
-})()
+}
+const ID = IDGenerator() //for id of parts
 
 const newLayer = (
     name = 'unnamed layer',
@@ -45,9 +47,15 @@ const newLayer = (
     rbx: Number(rbx),
     rby: Number(rby),
     name: String(name),
-    //selected: false,
     index: null,
 })
+
+const newGroup = (
+    name = 'unnammed group',
+    visibility = true,
+    collapsed = false,
+    children = []
+) => ({name, visibility, collapsed, children})
 
 //depth-first traversal with callback(node,index) on leaf nodes
 const DFT = (index, children, callback) => {
@@ -65,7 +73,6 @@ const DFT = (index, children, callback) => {
 
 const createLayerList = state => {
     let list = []
-    //list.length = state.numberOfLayers
     const updateList = (id, index) => {
         list[index] = id
         state.parts[id].index = index
@@ -79,8 +86,7 @@ const state = {
     parts: {}, //all layers
     treeData: [], //tree structure of layers and groups
     selected: {}, //selected layers and groups
-    layers: null,
-    //numberOfLayers: 0,
+    layers: [],
     requestUpdateColorLayers: [],
     requestUpdateVertLayers: [],
     requestUpdateTypeLayers: [],
@@ -88,7 +94,6 @@ const state = {
     //save change for undo redo
     undoStack: [],
     redoStack: [],
-    //keep track of changed states since the last save
 }
 
 const mutations = {
@@ -124,7 +129,6 @@ const mutations = {
             parts[id] = l
             treedata.push({ id })
         }
-        //state.numberOfLayers = sa.layer.length
         state.parts = parts
         state.treeData = treedata
         state.layers = createLayerList(state)
@@ -134,16 +138,31 @@ const mutations = {
     },
     addLayer(state) {
         let id = ID()
-        let l = newLayer('Layer ' + id)
+        let l = newLayer('Layer ' + state.layers.length)
         let changed = { partsAdded: {}, treeData: null }
         changed.partsAdded[id] = l
+        // TODO: OPTIMIZE: clone only the changed part
         changed.treeData = cloneDeep(state.treeData)
         state.undoStack.push(changed)
         state.redoStack = []
         Vue.set(state.parts, id, l)
         state.treeData.splice(0, 0, { id })
-        //state.numberOfLayers++
         state.layers = createLayerList(state)
+    },
+    addGroup(state) {
+        let id = ID()
+        let g = newGroup('New Group')
+        //save the current state before change
+        let changed = { partsAdded: {}, treeData: cloneDeep(state.treeData)}
+        changed.partsAdded[id] = g
+        state.undoStack.push(changed)
+        state.redoStack = []
+        Vue.set(state.parts, id, g)
+        state.treeData.splice(0,0,{id})
+        //state.layers = createLayerList(state)
+    },
+    setGroupChildren(state, children){
+
     },
     deleteLayer(state, id) {
         let index = state.parts[id].index
@@ -153,7 +172,6 @@ const mutations = {
         state.undoStack.push(changed)
         state.redoStack = []
         state.treeData.splice(index, 1)
-        //state.numberOfLayers--
         state.layers = createLayerList(state)
         Vue.delete(state.parts, id)
         Vue.delete(state.selected, id)
