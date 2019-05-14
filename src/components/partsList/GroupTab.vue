@@ -55,7 +55,7 @@ export default {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    background-color: #333;
+    background-color: #444;
     color: #ddd;
     height: 25px;
 }

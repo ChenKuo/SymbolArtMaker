@@ -1,95 +1,19 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
 import { SymbolArt, Layer, Group } from '@/js/SymbolArt.js'
-import union from 'lodash/union'
-import cloneDeep from 'lodash/cloneDeep'
-import clone from 'lodash/clone'
-
-Vue.use(Vuex)
 
 // this function create a function that generate
 //consectutaive integers for unique id
 const IDGenerator = (i = 0) => () => i++
 const ID = IDGenerator(1) //for id of parts
 
-//state of a symbol art
-const state = {
-    parts: { 0: SymbolArt() }, //all parts of a symbolart
-    //treeData: [], //tree structure of layers and groups
-    selected: {}, //selected layers and groups
-    layers: [],
-    requestUpdateColorLayers: [],
-    requestUpdateVertLayers: [],
-    requestUpdateTypeLayers: [],
-    shapeList: null,
-    //save change for undo redo
-    undoStack: [],
-    redoStack: [],
-}
-
-//depth-first traversal with callback(node,index) on leaf nodes
-const DFT = (index, children, callback) => {
-    for (let i = 0; i < children.length; i++) {
-        let child = children[i]
-        if (child.children) {
-            index = DFT(child.children, callback)
-        } else {
-            callback(child.id, index)
-            index++
-        }
-    }
-    return index
-}
-
-const createLayerList = state => {
-    let list = []
-    const updateList = (id, index) => {
-        list[index] = id
-        state.parts[id].index = index
-    }
-    DFT(0, state.treeData, updateList)
-    return list
-}
-
-
 
 const mutations = {
-    loadSymbolArt(state, sa) {
-        let parts = {}
-        let treedata = []
-        for (let i = sa.layer.length - 1; i >= 0; i--) {
-            let l = sa.layer[i]._attributes
-            let r = parseInt(l.color.substr(1, 2), 16)
-            let g = parseInt(l.color.substr(3, 2), 16)
-            let b = parseInt(l.color.substr(5, 2), 16)
-            let a = Math.floor(l.alpha * 255)
-            let type = convertType(l.type)
-            l = { ...l, r, g, b, a, type }
-            l = Layer(
-                l.name,
-                l.visibility,
-                type,
-                r,
-                g,
-                b,
-                a,
-                l.ltx,
-                l.lty,
-                l.lbx,
-                l.lby,
-                l.rtx,
-                l.rty,
-                l.rbx,
-                l.rby
-            )
-            let id = ID()
-            parts[id] = l
-            treedata.push(id)
-        }
-        state.parts = parts
-        state.treeData = treedata
-        state.layers = createLayerList(state)
+    // here sa is already processed into parts
+    setSymbolArt(state, sa) {
+        state.parts = sa
         state.selected = {}
+        state.requestUpdateColorLayers = {}
+        state.requestUpdateVertLayers = {}
+        state.equestUpdateTypeLayers = {}
         state.undoStack = []
         state.redoStack = []
     },
@@ -305,30 +229,4 @@ const mutations = {
     },
 }
 
-const getters = {
-    selected(state) {
-        return Object.keys(state.selected)
-    },
-}
-
-const actions = {}
-
-export default new Vuex.Store({
-    state,
-    getters,
-    mutations,
-    actions,
-})
-
-const convertType = t => {
-    t = +t + 1
-    if (241 <= t && t <= 292) return t - 241
-    if (321 <= t && t <= 359) return t - 321 + 52
-    if (401 <= t && t <= 439) return t - 401 + 91
-    if (481 <= t && t <= 517) return t - 481 + 130
-    if (561 <= t && t <= 581) return t - 561 + 167
-    if (641 <= t && t <= 697) return t - 641 + 188
-    if (1 <= t && t <= 80) return t - 1 + 245
-    if (721 <= t && t <= 754) return t - 721 + 512
-    return 0
-}
+export default mutations
