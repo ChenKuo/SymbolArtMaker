@@ -1,13 +1,14 @@
 import mutations from './mutatioins.js'
 import actions from './actions.js'
+import SymbolArt from '@/js/SymbolArt.js'
 
 //state of a symbol art
 const state = {
-    parts: { 0: null }, //all layers and groups in the symbol art, parts[0] is the symbol art itself
+    parts: { 0: SymbolArt() }, //all layers and groups in the symbol art, parts[0] is the symbol art itself
+    lastId: 0, //increment lastId every time a part is added to make unique id
     selected: {}, //selected layers and groups
-    requestUpdateColorLayers: {},
-    requestUpdateVertLayers: {},
-    requestUpdateTypeLayers: {},
+    beforeEdit: {},
+    requestRenderUpdate: {},
     shapeList: null, //maybe move this to another module
     //save change for undo redo
     undoStack: [],

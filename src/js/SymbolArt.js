@@ -1,13 +1,13 @@
 const SymbolArt = (
     name = 'Untitled Symbol Art',
-    visibility = 'true',
+    visible = true,
     children = []
-    /*ignore other properties for now*/
-) => ({ name, visibility, children })
+    /*ignore other attributes of SA for now*/
+) => ({ name: String(name), visible: Boolean(visible), children })
 
 const Layer = (
     name = 'unnamed layer',
-    visibility = true,
+    visible = true,
     type = 0,
     r = 0,
     g = 0,
@@ -22,7 +22,7 @@ const Layer = (
     rbx = 16,
     rby = 16
 ) => ({
-    visibility: Boolean(visibility),
+    visible: Boolean(visible),
     type: Number(type),
     r: Number(r),
     g: Number(g),
@@ -40,11 +40,10 @@ const Layer = (
     index: null,
 })
 
-const Group = (
-    name = 'unnammed group',
-    visibility = true,
-    collapsed = false,
-    children = []
-) => ({ name, visibility, collapsed, children })
+const Group = (name = 'unnammed group', visible = true, children = []) => ({
+    name,
+    visible,
+    children,
+})
 
-export default {SymbolArt, Layer, Group}
+export default { SymbolArt, Layer, Group }

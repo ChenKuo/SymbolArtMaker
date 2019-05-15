@@ -118,7 +118,7 @@ const mutations = {
         state.treeData.splice(0, 0, id)
         //state.layers = createLayerList(state)
     },
-    setGroupChildren(state, { id, children }) {},
+
     deleteLayer(state, id) {
         let index = state.parts[id].index
         let changed = { partsRemoved: {}, treeData: null }
