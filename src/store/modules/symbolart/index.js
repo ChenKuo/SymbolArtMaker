@@ -8,7 +8,7 @@ const state = {
     requestUpdateColorLayers: {},
     requestUpdateVertLayers: {},
     requestUpdateTypeLayers: {},
-    shapeList: null,
+    shapeList: null, //maybe move this to another module
     //save change for undo redo
     undoStack: [],
     redoStack: [],

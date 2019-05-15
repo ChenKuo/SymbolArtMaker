@@ -5,228 +5,114 @@ import { SymbolArt, Layer, Group } from '@/js/SymbolArt.js'
 const IDGenerator = (i = 0) => () => i++
 const ID = IDGenerator(1) //for id of parts
 
-
 const mutations = {
     // here sa is already processed into parts
+    // TODO: make buffer for switching between multiple symbolarts
+    // instead of replacing existing symbolart
     setSymbolArt(state, sa) {
         state.parts = sa
         state.selected = {}
         state.requestUpdateColorLayers = {}
         state.requestUpdateVertLayers = {}
         state.equestUpdateTypeLayers = {}
+        //start history from a fresh state
         state.undoStack = []
         state.redoStack = []
     },
-    addLayer(state) {
-        let id = ID()
-        let l = Layer('Layer ' + state.layers.length)
-        let changed = { partsAdded: {}, treeData: null }
-        changed.partsAdded[id] = l
-        // TODO: OPTIMIZE: clone only the changed part
-        changed.treeData = cloneDeep(state.treeData)
-        state.undoStack.push(changed)
-        state.redoStack = []
-        Vue.set(state.parts, id, l)
-        state.treeData.splice(0, 0, id)
-        state.layers = createLayerList(state)
+    // add a new layer under a parent at index(within the parent)
+    addLayer(state, parent, index) {
+        let part = Layer('Layer ' + state.layers.length)
+        remember([ addParts(state, parent, index, part) ])
     },
-    addGroup(state) {
-        let id = ID()
-        let g = Group('New Group')
-        //save the current state before change
-        let changed = { partsAdded: {}, treeData: cloneDeep(state.treeData) }
-        changed.partsAdded[id] = g
-        state.undoStack.push(changed)
-        state.redoStack = []
-        Vue.set(state.parts, id, g)
-        state.treeData.splice(0, 0, id)
-        //state.layers = createLayerList(state)
+    addGroup(state, parent, index) {
+        let part = Group('New Group')
+        remember([ addParts(state, parent, index, part)])
     },
-    setGroupChildren(state, { id, children }) {},
-    deleteLayer(state, id) {
-        let index = state.parts[id].index
-        let changed = { partsRemoved: {}, treeData: null }
-        changed.partsRemoved[id] = state.parts[id]
-        changed.treeData = cloneDeep(state.treeData)
-        state.undoStack.push(changed)
-        state.redoStack = []
-        state.treeData.splice(index, 1)
-        state.layers = createLayerList(state)
-        Vue.delete(state.parts, id)
-        Vue.delete(state.selected, id)
+    deleteLayer(state, parent, index) {
+        remember([ removeParts(state, parent, index, count=1) ])
+        Vue.delete(state.selected, state.parts[parent].children[index])
     },
     select(state, id) {
         state.selected = {}
         state.selected[id] = true
     },
-    editLayerType(state, { id, type }) {
-        let layer = state.parts[id]
-        let changed = { shapeEdit: {} }
-        changed.shapeEdit[id] = layer.type
-        state.undoStack.push(changed)
-        state.redoStack = []
-        layer.type = type
-        // eslint-disable-next-line prettier/prettier
-        state.requestUpdateTypeLayers = union(state.requestUpdateTypeLayers, [id])
-    },
-    editLayerColor(state, { id, color }) {
-        let layer = state.parts[id]
-        Object.assign(layer, color)
-        // eslint-disable-next-line prettier/prettier
-        state.requestUpdateColorLayers = union(state.requestUpdateColorLayers, [id])
-    },
-    editLayerVertices(state, { id, vertices }) {
-        let layer = state.parts[id]
-        Object.assign(layer, vertices)
-        // eslint-disable-next-line prettier/prettier
-        state.requestUpdateVertLayers = union(state.requestUpdateVertLayers, [id])
+    editPart(state, { id, edits }) {
+        remember([ editPart(state, id, edits) ])
+        state.requestUpdateTypeLayers[id] = true
     },
     clearUpdateColorRequest(state) {
-        state.requestUpdateColorLayers = []
+        state.requestUpdateColorLayers = {}
     },
     clearUpdateVertRequest(state) {
-        state.requestUpdateVertLayers = []
+        state.requestUpdateVertLayers = {}
     },
     clearUpdateTypeRequest(state) {
-        state.requestUpdateTypeLayers = []
+        state.requestUpdateTypeLayers = {}
     },
     setShapeList(state, { shapeList }) {
         state.shapeList = shapeList
     },
-    rememberColor(state, ids) {
-        let change = { colorEdit: null }
-        for (let i = 0; i < ids.length; i++) {
-            let l = state.parts[ids[i]]
-            change.colorEdit[ids[i]] = { r: l.r, g: l.g, b: l.b, a: l.a }
-        }
-        state.undoStack.push(change)
-        state.redoStack = []
-    },
-    rememberVertices(state, ids) {
-        let change = { vertexEdit: null }
-        for (let i = 0; i < ids.length; i++) {
-            let l = state.parts[ids[i]]
-            change.vertexEdit[ids[i]] = {
-                lbx: l.lbx,
-                lby: l.lby,
-                ltx: l.ltx,
-                lty: l.lty,
-                rbx: l.rbx,
-                rby: l.rby,
-                rtx: l.rtx,
-                rty: l.rty,
-            }
-        }
-        state.undoStack.push(change)
-        state.redoStack = []
-    },
-    remember(state, ids) {
-        let change = {
-            edited: ids.reduce((edited, id) => {
-                edited[id] = clone(state.parts[id])
-                return edited
-            }, {}),
-        }
-        state.undoStack.push(change)
-        state.redoStack = []
-    },
     undo(state) {
-        if (state.undoStack.length == 0) {
-            console.log('no more undo')
-            return
+        let undoers = state.undoStack.pop()
+        let redoers = []
+        for(let i = 0; i<undoers.length; i++){
+            let undoer = undoer.pop()
+            redoers.push(undoer())
         }
-        let change = state.undoStack.pop()
-        if (change.partsAdded) {
-            // remove the parts
-            for (let id in change.partsAdded) {
-                Vue.delete(state.parts, id)
-                Vue.delete(state.selected, id)
-            }
-        }
-        if (change.partsRemoved) {
-            // add parts back in
-            for (let id in change.partsRemoved) {
-                Vue.set(state.parts, id, change.partsRemoved[id])
-            }
-        }
-        if (change.shapeEdit) {
-            //swap the edit
-            for (let id in change.shapeEdit) {
-                let t = state.parts[id].type
-                state.parts[id].type = change.shapeEdit[id]
-                change.shapeEdit[id] = t
-                state.requestUpdateTypeLayers = union(
-                    state.requestUpdateTypeLayers,
-                    [id]
-                )
-            }
-        }
-        if (change.edited) {
-            //swap the edited layers
-            for (let id in change.edited) {
-                let p = state.parts[id]
-                state.parts[id] = change.edited[id]
-                change.edited[id] = p
-            }
-        }
-
-        if (change.treeData) {
-            let tree = state.treeData
-            state.treeData = change.treeData
-            change.treeData = tree
-            state.layers = createLayerList(state)
-        }
-
-        state.redoStack.push(change)
+        state.redoStack.push(redoers)
     },
     redo(state) {
-        if (state.redoStack.length === 0) {
-            console.log('no more redo')
-            return
+        let redoers = state.redoStack.pop()
+        let undoers = []
+        for(let i = 0; i<redoers.length; i++){
+            let redoer = redoer.pop()
+            undoers.push(redoer())
         }
-        let change = state.redoStack.pop()
+        state.redoStack.push(redoers)
+    }
+}
 
-        if (change.partsAdded) {
-            // re-add the parts
-            for (let id in change.partsAdded) {
-                Vue.set(state.parts, id, change.partsAdded[id])
-            }
-        }
-        if (change.partsRemoved) {
-            // re-remove the parts
-            for (let id in change.partsRemoved) {
-                Vue.delete(state.parts, id)
-                Vue.delete(state.selected, id)
-            }
-        }
-        if (change.shapeEdit) {
-            //swap the edit
-            for (let id in change.shapeEdit) {
-                let t = state.parts[id].type
-                state.parts[id].type = change.shapeEdit[id]
-                change.shapeEdit[id] = t
-                state.requestUpdateTypeLayers = union(
-                    state.requestUpdateTypeLayers,
-                    [id]
-                )
-            }
-        }
-        if (change.edited) {
-            //swap the edited layers
-            for (let id in change.edited) {
-                let p = state.parts[id]
-                state.parts[id] = change.edited[id]
-                change.edited[id] = p
-            }
-        }
-        if (change.treeData) {
-            let tree = state.treeData
-            state.treeData = change.treeData
-            change.treeData = tree
-            state.layers = createLayerList(state)
-        }
-        state.undoStack.push(change)
-    },
+const remember = (state, undoers)=>{
+    state.undoStack.push(undoers)
+    state.redoStack = []
+}
+
+/* these functions perform changes to the state 
+and return a function for undoing the change */
+
+// adding consecutive parts to same parent
+const addParts = (state, parent, index, ...parts)=>{
+    let ids = []
+    for(let i = 0; i<parts.length; i++){
+        let id = ID()
+        Vue.set(state.parts, id, part)
+        ids.push(id)
+    }
+    state.parts[parent].children.splice(index, 0, ids)
+    return (state)=>removeParts( state, parent, index, count = parts.length)
+}
+// removing consecutive parts from same parent
+const removeParts = (state, parent, index, count)=>{
+    let ids = state.parts[parent].children.splice(index, count)
+    for(let i = 0; i<ids.length; i++)
+        Vue.delete(state.parts, ids[i])
+    return (state) => addParts(state , parent, index, ...ids)
+}
+// moving consecutive parts from one parent(or index) to another
+const moveParts = (state, parentOld, indexOld, parentNew, indexNew, count)=>{
+    let ids = state.parts[parentOld].children.splice(indexOld, count)
+    state.parts[parentNew].children.splice(indexNew, 0, ids)
+    return (state) =>moveParts(state, parentNew, indexNew, parentOld, indexOld, count)
+}
+// edit some properties of a part
+const editPart = (state, id, edits) => {
+    let part = state.parts[id]
+    for(let prop in edits){
+        let temp = part[prop]
+        part[prop] = edits[prop]
+        edits[prop] = temp
+    }
+    return (state) =>editPart(state , id, edits)
 }
 
 export default mutations
