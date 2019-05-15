@@ -18,18 +18,18 @@ export default {
     name: 'ShapeEditor',
     computed: {
         shapeList() {
-            return this.$store.state.shapeList
+            return this.$store.state.symbolart.shapeList
         },
-        LayerId: function() {
+        LayerId() {
             let selected = this.$store.getters.selected
             if (selected.length === 1)
                 return selected[0]
             return null
         },
-        layer: function() {
-            return this.$store.state.parts[this.LayerId]
+        layer() {
+            return this.$store.state.symbolart.parts[this.LayerId]
         },
-        layerShape: function() {
+        layerShape() {
             return this.layer ? this.layer.type : null
         },
     },
@@ -47,7 +47,7 @@ export default {
             if (!this.layer) {
                 return
             }
-            this.$store.commit('editLayerType', { id: this.LayerId, type })
+            this.$store.commit('editPart', { id: this.LayerId, edits:{type}, editType: 0b100 })
         },
     },
 }

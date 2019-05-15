@@ -58,20 +58,17 @@ export default {
     components: {
         ColorPicker,
     },
-    data() {
-        return {}
-    },
     computed: {
-        id: function() {
+        id() {
             let selected = this.$store.getters.selected
             if (selected.length === 1 )
                 return selected[0]
             return null
         },
-        layer: function() {
-            return this.$store.state.parts[this.id]
+        layer() {
+            return this.$store.state.symbolart.parts[this.id]
         },
-        colorCode: function() {
+        colorCode() {
             let l = this.layer
             if (!l) {
                 return '#ffffff'
@@ -81,7 +78,7 @@ export default {
             let b = l.b.toString(16)
             return '#' + r + g + b
         },
-        alpha: function() {
+        alpha() {
             let l = this.layer
             if (!l) {
                 return 8
@@ -96,23 +93,21 @@ export default {
             }
             let [r, g, b] = colorCode.length === 7? [1, 3, 5].map(i => parseInt(colorCode.substring(i, i + 2), 16))
                 : [1, 2, 3].map(i => parseInt(colorCode.substring(i, i + 1), 16) * 17)
-            let a = this.layer.a
-            this.$store.commit('editLayerColor', {
+            this.$store.commit('editPart', {
                 id: this.id,
-                color: { r, g, b, a },
+                edits: { r, g, b },
+                editType: 0b010
             })
         },
         updateAlpha(e) {
             if (!this.layer) {
                 return
             }
-            let r = this.layer.r
-            let g = this.layer.g
-            let b = this.layer.b
             let a = +e.srcElement.value * 32 - 1
-            this.$store.commit('editLayerColor', {
+            this.$store.commit('editPart', {
                 id: this.id,
-                color: { r, g, b, a },
+                edits: { a },
+                editType: 0b010
             })
         },
     },

@@ -1,4 +1,4 @@
-import { SymbolArt, Layer, Group } from './SymbolArt'
+import { SymbolArt, Layer, Group } from './SymbolArtParts'
 import convert from 'xml-js'
 
 const loadSaml = (file, callback) => {
@@ -96,7 +96,8 @@ const convertType = t => {
     return 0
 }
 
-export default loadSaml
+export { loadSaml }
+export default { loadSaml }
 
 /// an example of how a json parsed from saml look ///
 /*

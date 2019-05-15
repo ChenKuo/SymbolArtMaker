@@ -15,7 +15,7 @@ export default {
     },
     computed: {
         isGroup() {
-            return !!this.$store.state.parts[this.id].children
+            return !!this.$store.state.symbolart.parts[this.id].children
         }
     },
     methods:{

@@ -4,12 +4,11 @@
 
 <script>
 import SymbolArtDrawer from './SymbolArtDrawer.js'
-import symbolImage from '../../assets/symbols.png'
 
 export default {
     name: 'ViewCanvas',
     created() {
-        this.texture.src = symbolImage
+        this.texture.src = './symbols.png'
     },
     mounted() {
         this.canvas = this.$el
@@ -33,16 +32,10 @@ export default {
     },
     computed: {
         layers() {
-            return this.$store.state.layers
+            return this.$store.getters.layers
         },
-        updateColor() {
-            return this.$store.state.requestUpdateColorLayers
-        },
-        updateVertices() {
-            return this.$store.state.requestUpdateVertLayers
-        },
-        updateType() {
-            return this.$store.state.requestUpdateTypeLayers
+        updateRequest() {
+            return this.$store.state.symbolart.requestRenderUpdate
         },
     },
     watch: {
@@ -52,21 +45,9 @@ export default {
                 this.readyToRender = false
             }
         },
-        updateColor(layers) {
-            if (this.readyToRender && layers.length) {
-                requestAnimationFrame(this.updateColorandRender)
-                this.readyToRender = false
-            }
-        },
-        updateVertices(layers) {
-            if (this.readyToRender && layers.length) {
-                requestAnimationFrame(this.updateVerticesandRender)
-                this.readyToRender = false
-            }
-        },
-        updateType(layers) {
-            if (this.readyToRender && layers.length) {
-                requestAnimationFrame(this.updateTypeandRender)
+        updateRequest(layersUpdated) {
+            if (this.readyToRender && Object.keys(layersUpdated).length) {
+                requestAnimationFrame(this.updateAndRender)
                 this.readyToRender = false
             }
         },
@@ -75,7 +56,7 @@ export default {
         rebuildListandRender() {
             let list = this.layers
             for (let i = 0; i < list.length; i++) {
-                let l = this.$store.state.parts[list[i]]
+                let l = this.$store.state.symbolart.parts[list[i]]
                 this.vertices.set(
                     [l.lbx, l.lby, l.ltx, l.lty, l.rbx, l.rby, l.rtx, l.rty],
                     i * 8
@@ -91,44 +72,43 @@ export default {
             this.renderer.updateColors(this.colors)
             this.renderer.updateVertices(this.vertices)
             this.render()
-            //this.$store.commit('clearRebuildListRequest')
         },
-        updateColorandRender() {
-            let layersToUpdate = this.$store.state.requestUpdateColorLayers
-            for (let i = 0; i < layersToUpdate.length; i++) {
-                let l = this.$store.state.parts[layersToUpdate[i]]
-                this.colors.set(
-                    // eslint-disable-next-line prettier/prettier
-                    [l.r, l.g, l.b, l.a, l.r, l.g, l.b, l.a, l.r, l.g, l.b, l.a, l.r, l.g, l.b, l.a],
-                    l.index * 16
-                )
-            }
-            this.renderer.updateColors(this.colors)
-            this.render()
-            this.$store.commit('clearUpdateColorRequest')
-        },
-        updateVerticesandRender() {
-            let layersToUpdate = this.$store.state.requestUpdateVertLayers
-            for (let i = 0; i < layersToUpdate.length; i++) {
-                let l = this.$store.state.parts[layersToUpdate[i]]
-                this.vertices.set(
+        updateAndRender() {
+            let layersToUpdate = this.updateRequest
+            let flags = 0b000
+            for (let i in layersToUpdate) {
+                let l = this.$store.state.symbolart.parts[i]
+                let flag = layersToUpdate[i]
+                let index = this.$store.getters.indexOf[i]
+                flags |= flag
+                if(flag|0b100){
+                    this.types.set([l.type, l.type, l.type, l.type], index * 4)
+                }
+                if(flag|0b010){
+                    this.colors.set(
+                        // eslint-disable-next-line prettier/prettier
+                        [l.r, l.g, l.b, l.a, l.r, l.g, l.b, l.a, l.r, l.g, l.b, l.a, l.r, l.g, l.b, l.a],
+                        index * 16
+                    )
+                }
+                if(flag|0b001){
+                    this.vertices.set(
                     [l.lbx, l.lby, l.ltx, l.lty, l.rbx, l.rby, l.rtx, l.rty],
-                    l.index * 8
-                )
+                    index * 8
+                    )
+                }
             }
-            this.renderer.updateVertices(this.vertices)
-            this.render()
-            this.$store.commit('clearUpdateVertRequest')
-        },
-        updateTypeandRender() {
-            let layersToUpdate = this.$store.state.requestUpdateTypeLayers
-            for (let i = 0; i < layersToUpdate.length; i++) {
-                let l = this.$store.state.parts[layersToUpdate[i]]
-                this.types.set([l.type, l.type, l.type, l.type], l.index * 4)
+            if(flags|0b100){
+                this.renderer.updateTypes(this.types)
             }
-            this.renderer.updateTypes(this.types)
+            if(flags|0b010){
+                this.renderer.updateColors(this.colors)
+            }
+            if(flags|0b001){
+                this.renderer.updateVertices(this.vertices)
+            }
             this.render()
-            this.$store.commit('clearUpdateTypeRequest')
+            this.$store.commit('clearRenderUpdateRequest')
         },
         render() {
             this.resize()

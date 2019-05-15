@@ -91,14 +91,14 @@ export default {
             return null
         },
         layer() {
-            return this.$store.state.parts[this.layerId]
+            return this.$store.state.symbolart.parts[this.layerId]
         },
         // shortened for vertices
         v() {
             return this.layer || {}
         },
         layers() {
-            return this.$store.state.layers
+            return this.$store.getters.layers
         }
     },
     methods: {
@@ -127,9 +127,10 @@ export default {
                         changedVertices[vertName + 'y'] =
                             this.verticesBeforeDrag[vertName + 'y'] + moveY
                     }
-                    this.$store.commit('editLayerVertices', {
+                    this.$store.commit('editPart', {
                         id: this.editId,
-                        vertices: changedVertices,
+                        edits: changedVertices,
+                        editType: 0b001
                     })
                     this.updateReady = true
                 })
@@ -150,7 +151,7 @@ export default {
                 //check if x,y lies inside the layer
                 let j = (from + i*dir)%this.layers.length
                 let id = this.layers[j]
-                let l = this.$store.state.parts[id]
+                let l = this.$store.state.symbolart.parts[id]
                 if(pointInTriangle(x, y, l.lbx, l.lby, l.ltx, l.lty, l.rbx, l.rby)
                     ||pointInTriangle(x, y, l.rbx, l.rby, l.ltx, l.lty, l.rtx, l.rty)){
                         this.$store.commit('select', id)

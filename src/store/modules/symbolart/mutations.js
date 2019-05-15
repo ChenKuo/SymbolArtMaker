@@ -1,7 +1,17 @@
-import { Layer, Group } from '@/js/SymbolArt'
+import { SymbolArt, Layer, Group } from '@/js/SymbolArtParts'
 import Vue from 'vue'
 
 const mutations = {
+    newSymbolArt(state) {
+        state.parts = { 0: SymbolArt() }
+        state.lastId = 0
+        state.selected = {}
+        state.requestUpdateColorLayers = {}
+        state.requestUpdateVertLayers = {}
+        state.equestUpdateTypeLayers = {}
+        state.undoStack = []
+        state.redoStack = []
+    },
     // here sa is already processed into parts
     // TODO: make buffer for switching between multiple symbolarts
     // instead of replacing existing symbolart
@@ -17,20 +27,20 @@ const mutations = {
         state.redoStack = []
     },
     // add a new layer under a parent at index(within the parent)
-    addLayer(state, parent, index) {
-        let part = Layer('Layer ' + state.layers.length)
-        remember([addParts(state, parent, index, part)])
+    addLayer(state, { parent, index }) {
+        let part = Layer('Layer ' + state.lastId)
+        remember(state, [addParts(state, parent, index, part)])
     },
-    addGroup(state, parent, index) {
+    addGroup(state, { parent, index }) {
         let part = Group('New Group')
-        remember([addParts(state, parent, index, part)])
+        remember(state, [addParts(state, parent, index, part)])
     },
-    deletePart(state, parent, index) {
-        remember([removeParts(state, parent, index, 1)])
+    deletePart(state, { parent, index }) {
+        remember(state, [removeParts(state, parent, index, 1)])
         Vue.delete(state.selected, state.parts[parent].children[index])
     },
-    movePart(state, parent, index, parentNew, indexNew) {
-        remember([moveParts(state, parent, index, parentNew, indexNew)])
+    movePart(state, { parent, index, parentNew, indexNew }) {
+        remember(state, [moveParts(state, parent, index, parentNew, indexNew)])
     },
     select(state, id) {
         state.selected = {}
@@ -38,16 +48,20 @@ const mutations = {
     },
     //editType is 0b000 to 0b111 flags for shape, color, vertex edits
     editPart(state, { id, edits, editType }) {
-        remember([editPart(state, id, edits)])
-        state.requestRenderUpdate[id] |= editType
+        remember(state, [editPart(state, id, edits)])
+        Vue.set(
+            state.requestRenderUpdate,
+            id,
+            state.requestRenderUpdate[id] | editType
+        )
     },
     // edit the part without saving to undo stack
     // must commit finishEdit as last edit
     continuousEdit(state, { id, edits, editType }) {
         //keep a copy of part before edit
-        if (!state.beforeEdit[id]) {
-            state.beforeEdit[id] = Object.assign({}, state.parts[id], edits)
-        }
+        state.beforeEdit[id] =
+            state.beforeEdit[id] || Object.assign({}, state.parts[id], edits)
+
         Object.assign(state.parts[id], edits)
         state.requestRenderUpdate[id] |= editType
     },
@@ -55,7 +69,7 @@ const mutations = {
     finishEdit(state, { id, edits, editType }) {
         if (state.beforeEdit[id]) {
             state.parts[id] = state.beforeEdit[id]
-            remember([editPart(state, id, edits)])
+            remember(state, [editPart(state, id, edits)])
             state.requestRenderUpdate[id] |= editType
             delete state.beforeEdit[id]
         }
@@ -102,7 +116,7 @@ const addParts = (state, parent, index, ...parts) => {
         Vue.set(state.parts, id, parts[i])
         ids.push(id)
     }
-    state.parts[parent].children.splice(index, 0, ids)
+    state.parts[parent].children.splice(index, 0, ...ids)
     return state => removeParts(state, parent, index, parts.length)
 }
 // removing consecutive parts from same parent
@@ -114,7 +128,7 @@ const removeParts = (state, parent, index, count) => {
 // moving consecutive parts from one parent(or index) to another
 const moveParts = (state, parentOld, indexOld, parentNew, indexNew, count) => {
     let ids = state.parts[parentOld].children.splice(indexOld, count)
-    state.parts[parentNew].children.splice(indexNew, 0, ids)
+    state.parts[parentNew].children.splice(indexNew, 0, ...ids)
     return state =>
         moveParts(state, parentNew, indexNew, parentOld, indexOld, count)
 }

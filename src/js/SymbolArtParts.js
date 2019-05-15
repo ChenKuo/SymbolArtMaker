@@ -46,4 +46,5 @@ const Group = (name = 'unnammed group', visible = true, children = []) => ({
     children,
 })
 
+export { SymbolArt, Layer, Group }
 export default { SymbolArt, Layer, Group }

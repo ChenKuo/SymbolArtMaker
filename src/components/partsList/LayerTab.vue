@@ -14,10 +14,10 @@ export default {
     props: { id: { type: Number, required: true } },
     computed: {
         selected() {
-            return this.$store.state.selected[this.id]
+            return this.$store.state.symbolart.selected[this.id]
         },
         part() {
-            return this.$store.state.parts[this.id]
+            return this.$store.state.symbolart.parts[this.id]
         },
         name() {
             return this.part.name
@@ -42,7 +42,7 @@ export default {
                 this.part.type >= 512
                     ? this.part.type - 512 + 325
                     : this.part.type
-            return this.$store.state.shapeList[i].url
+            return this.$store.state.symbolart.shapeList[i].url
         },
     },
     watch:{

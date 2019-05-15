@@ -16,7 +16,7 @@ export default {
     computed: {
         children:{
             get(){
-                return this.$store.state.treeData
+                return this.$store.state.symbolart.parts[0].children
             },
             set(children){
                 this.$store.commit('setGroupChildren',{id:null,children})

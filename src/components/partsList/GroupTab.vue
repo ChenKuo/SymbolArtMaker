@@ -26,18 +26,13 @@ export default {
     },
     computed: {
         group() {
-            return this.$store.state.parts[this.id]
+            return this.$store.state.symbolart.parts[this.id]
         },
         name () {
             return this.group.name
         },
-        children:{
-            get(){
+        children(){
                 return this.group.children
-            },
-            set(list){
-                return this.$store.commit('setGroupChildren',{list})
-            }
         }
         
     }

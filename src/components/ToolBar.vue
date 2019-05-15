@@ -61,14 +61,24 @@ export default {
     },
     methods: {
         addLayer() {
-            this.$store.commit('addLayer')
+            let selectedId = this.selected[0]
+            let parent = this.$store.getters.parentOf[selectedId]||0
+            let index = this.$store.getters.indexOf[selectedId]||0
+            this.$store.commit('addLayer',{parent, index})
         },
         addGroup() {
-            this.$store.commit('addGroup')
+            let selectedId = this.selected[0]
+            let parent = this.$store.getters.parentOf[selectedId]||0
+            let index = this.$store.getters.indexOf[selectedId]||0
+            this.$store.commit('addGroup', {parent, index})
         },
         deletePart(){
-            if(this.selected.length === 1)
-                this.$store.commit('deleteLayer', this.selected[0])
+            if(this.selected.length === 1){
+                let selectedId = this.selected[0]
+                let parent = this.$store.getters.parentOf[selectedId]||0
+                let index = this.$store.getters.indexOf[selectedId]||0
+                this.$store.commit('deletePart', {parent, index})
+            }
         },
         undo(){
             this.$store.commit('undo')
