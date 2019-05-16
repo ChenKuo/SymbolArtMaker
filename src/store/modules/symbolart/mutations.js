@@ -39,8 +39,10 @@ const mutations = {
         remember(state, [removeParts(state, parent, index, 1)])
         Vue.delete(state.selected, state.parts[parent].children[index])
     },
-    movePart(state, { parent, index, parentNew, indexNew }) {
-        remember(state, [moveParts(state, parent, index, parentNew, indexNew)])
+    movePart(state, { parentOld, indexOld, parentNew, indexNew }) {
+        remember(state, [
+            moveParts(state, parentOld, indexOld, parentNew, indexNew, 1),
+        ])
     },
     select(state, id) {
         state.selected = {}
@@ -59,18 +61,27 @@ const mutations = {
     // must commit finishEdit as last edit
     continuousEdit(state, { id, edits, editType }) {
         //keep a copy of part before edit
-        state.beforeEdit[id] =
-            state.beforeEdit[id] || Object.assign({}, state.parts[id], edits)
+        if (!state.beforeEdit) {
+            state.beforeEdit[id] = Object.assign({}, state.parts[id], edits)
+        }
 
         Object.assign(state.parts[id], edits)
-        state.requestRenderUpdate[id] |= editType
+        Vue.set(
+            state.requestRenderUpdate,
+            id,
+            state.requestRenderUpdate[id] | editType
+        )
     },
     // edits must contain all properties changed during continuousEdit
     finishEdit(state, { id, edits, editType }) {
         if (state.beforeEdit[id]) {
             state.parts[id] = state.beforeEdit[id]
             remember(state, [editPart(state, id, edits)])
-            state.requestRenderUpdate[id] |= editType
+            Vue.set(
+                state.requestRenderUpdate,
+                id,
+                state.requestRenderUpdate[id] | editType
+            )
             delete state.beforeEdit[id]
         }
     },
@@ -84,8 +95,8 @@ const mutations = {
         let undoers = state.undoStack.pop()
         let redoers = []
         for (let i = 0; i < undoers.length; i++) {
-            let undoer = undoer.pop()
-            redoers.push(undoer())
+            let undoer = undoers.pop()
+            redoers.push(undoer(state))
         }
         state.redoStack.push(redoers)
     },
@@ -93,8 +104,8 @@ const mutations = {
         let redoers = state.redoStack.pop()
         let undoers = []
         for (let i = 0; i < redoers.length; i++) {
-            let redoer = redoer.pop()
-            undoers.push(redoer())
+            let redoer = redoers.pop()
+            undoers.push(redoer(state))
         }
         state.redoStack.push(redoers)
     },
@@ -122,8 +133,9 @@ const addParts = (state, parent, index, ...parts) => {
 // removing consecutive parts from same parent
 const removeParts = (state, parent, index, count) => {
     let ids = state.parts[parent].children.splice(index, count)
+    let parts = ids.map(id => state.parts[id])
     for (let i = 0; i < ids.length; i++) Vue.delete(state.parts, ids[i])
-    return state => addParts(state, parent, index, ...ids)
+    return state => addParts(state, parent, index, ...parts)
 }
 // moving consecutive parts from one parent(or index) to another
 const moveParts = (state, parentOld, indexOld, parentNew, indexNew, count) => {

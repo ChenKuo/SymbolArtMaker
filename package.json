@@ -13,7 +13,6 @@
     "vue": "^2.6.10",
     "vue-color-picker-wheel": "^0.4.3",
     "sortablejs": "SortableJS/Sortable#next-version",
-    "vuedraggable": "^2.20.0",
     "vuex": "^3.0.1"
   },
   "devDependencies": {

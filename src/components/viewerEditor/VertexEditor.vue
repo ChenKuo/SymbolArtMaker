@@ -127,7 +127,7 @@ export default {
                         changedVertices[vertName + 'y'] =
                             this.verticesBeforeDrag[vertName + 'y'] + moveY
                     }
-                    this.$store.commit('editPart', {
+                    this.$store.commit('continuousEdit', {
                         id: this.editId,
                         edits: changedVertices,
                         editType: 0b001
@@ -137,7 +137,24 @@ export default {
                 this.updateReady = false
             }
         },
-        onDragEnd() {
+        onDragEnd(e) {
+            requestAnimationFrame(()=>{
+                let moveX = (e.x - this.dragStartX) * this.scale
+                let moveY = (e.y - this.dragStartY) * this.scale
+                let changedVertices = {}
+                for (let i = 0; i < this.dragVertex.length; i++) {
+                    let vertName = this.dragVertex[i]
+                    changedVertices[vertName + 'x'] =
+                        this.verticesBeforeDrag[vertName + 'x'] + moveX
+                    changedVertices[vertName + 'y'] =
+                        this.verticesBeforeDrag[vertName + 'y'] + moveY
+                }
+                this.$store.commit('finishEdit', {
+                    id: this.editId,
+                    edits: changedVertices,
+                    editType: 0b001
+                })
+            })
             document.removeEventListener('mousemove', this.onDragging, false)
             document.removeEventListener('mouseup', this.onDragEnd, false)
         },

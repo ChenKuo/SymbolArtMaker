@@ -11,13 +11,13 @@
 
 <script>
 export default {
-    props: { id: { type: Number, required: true } },
+    props: { partId: { type: Number, required: true } },
     computed: {
         selected() {
-            return this.$store.state.symbolart.selected[this.id]
+            return this.$store.state.symbolart.selected[this.partId]
         },
         part() {
-            return this.$store.state.symbolart.parts[this.id]
+            return this.$store.state.symbolart.parts[this.partId]
         },
         name() {
             return this.part.name
@@ -54,7 +54,7 @@ export default {
     },
     methods: {
         select() {
-            this.$store.commit('select', this.id)
+            this.$store.commit('select', this.partId)
         },
     },
 }

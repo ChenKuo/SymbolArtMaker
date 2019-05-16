@@ -5,36 +5,33 @@
             <span>{{name}}</span>
             <input type='checkbox' />
         </div>
-        <draggable v-model="children" class="group_content">
-            <PartTab v-for="id in children" :key="id"/>
-        </draggable>
+        <ChildPartsList :partId="partId" v-show="expanded" class="group_content" />
     </div>
 </template>
+
 <script>
-import draggable from 'vuedraggable'
-import PartTab from './PartTab.vue'
 import CollapseImg from '@/assets/play.svg'
 export default {
     name:'GroupTab',
+    data(){
+        return {
+            expanded: true
+        }
+    },
     components: {
-        draggable,
+        ChildPartsList: () => import('./ChildPartsList.vue'),
         CollapseImg,
-        PartTab
     },
     props: {
-        id: {required: true}
+        partId: {required: true}
     },
     computed: {
         group() {
-            return this.$store.state.symbolart.parts[this.id]
+            return this.$store.state.symbolart.parts[this.partId]
         },
         name () {
             return this.group.name
         },
-        children(){
-                return this.group.children
-        }
-        
     }
     
 }
@@ -44,6 +41,8 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    border-left: 3px solid #444;
+    border-bottom: 2px solid #444;
 }
 .group_handle{
     display: flex;
@@ -62,5 +61,7 @@ export default {
 .group_content{
     display: flex;
     flex-direction: column;
+    background-color: #ddd;
+    padding-left: 3px;
 }
 </style>

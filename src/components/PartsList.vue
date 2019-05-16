@@ -1,34 +1,19 @@
 <template>
-    <draggable v-model="children" class="parts_list">
-        <PartTab v-for="id in children" :key="id" :id="id" />
-    </draggable>
+    <ChildPartsList :partId ="0" class="sa_tree"/>
 </template>
 
 <script>
-import draggable from 'vuedraggable'
-import PartTab from './partsList/PartTab.vue'
+import ChildPartsList from './partsList/ChildPartsList.vue'
 export default {
     name: 'PartsList',
     components: {
-        draggable,
-        PartTab,
-    },
-    computed: {
-        children:{
-            get(){
-                return this.$store.state.symbolart.parts[0].children
-            },
-            set(children){
-                this.$store.commit('setGroupChildren',{id:null,children})
-            }
-        },
-    },
-    methods: {},
+        ChildPartsList
+    }
 }
 </script>
 
 <style>
-.parts_list {
+.sa_tree {
     background-color: #cccccc;
     overflow: scroll;
 }

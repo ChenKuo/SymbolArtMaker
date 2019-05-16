@@ -1,21 +1,23 @@
 <template>
-    <GroupTab v-if="isGroup" :id="id"/>
-    <LayerTab v-else :id="id"/>
+    <GroupTab v-if="isGroup" :partId="partId"/>
+    <LayerTab v-else :partId="partId"/>
 </template>
 
 <script>
+import LayerTab from './LayerTab.vue'
+import GroupTab from './GroupTab.vue'
 export default {
     name: 'PartTab',
     components: {
-        GroupTab: () => import('./GroupTab.vue'),
-        LayerTab: () => import('./LayerTab.vue')
+        GroupTab,
+        LayerTab
     },
     props: {
-        id : {required: true}
+        partId : {required: true}
     },
     computed: {
         isGroup() {
-            return !!this.$store.state.symbolart.parts[this.id].children
+            return !!this.$store.state.symbolart.parts[this.partId].children
         }
     },
     methods:{
