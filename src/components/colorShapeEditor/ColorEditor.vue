@@ -1,13 +1,11 @@
 <template>
     <div class="color_editor">
-        <color-picker
-            :value="colorCode"
-            startColor="#ffffff"
+        <ColorPicker
+            :value="color"
             @color-change="updateColor"
-            :disabled="!layer"
-            :width="200"
-            :height="200"
-        ></color-picker>
+            @finish-edit="finishUpdate"
+            :size="200"
+        />
         <div id="alpha-editor">
             <svg
                 id="alpha-bg"
@@ -28,15 +26,77 @@
                     <rect fill="gray" x="6" width="6" height="6" y="6" />
                 </pattern>
                 <g>
-                    <rect fill="url(#pattern)" y="0" x="0" width="192" height="24"/>
-                    <rect :fill="colorCode" opacity="0.125" y="0" x="0" width="24" height="24"/>
-                    <rect :fill="colorCode" opacity="0.25" y="0" x="24" width="24" height="24"/>
-                    <rect :fill="colorCode" opacity="0.375" y="0" x="48" width="24" height="24"/>
-                    <rect :fill="colorCode" opacity="0.5" y="0" x="72" width="24" height="24"/>
-                    <rect :fill="colorCode" opacity="0.625" y="0" x="96" width="24" height="24"/>
-                    <rect :fill="colorCode" opacity="0.75" y="0" x="120" width="24" height="24"/>
-                    <rect :fill="colorCode" opacity="0.875" y="0" x="144" width="24" height="24"/>
-                    <rect :fill="colorCode" opacity="1" y="0" x="168" width="24" height="24"/>
+                    <rect
+                        fill="url(#pattern)"
+                        y="0"
+                        x="0"
+                        width="192"
+                        height="24"
+                    />
+                    <rect
+                        :fill="colorCode"
+                        opacity="0.125"
+                        y="0"
+                        x="0"
+                        width="24"
+                        height="24"
+                    />
+                    <rect
+                        :fill="colorCode"
+                        opacity="0.25"
+                        y="0"
+                        x="24"
+                        width="24"
+                        height="24"
+                    />
+                    <rect
+                        :fill="colorCode"
+                        opacity="0.375"
+                        y="0"
+                        x="48"
+                        width="24"
+                        height="24"
+                    />
+                    <rect
+                        :fill="colorCode"
+                        opacity="0.5"
+                        y="0"
+                        x="72"
+                        width="24"
+                        height="24"
+                    />
+                    <rect
+                        :fill="colorCode"
+                        opacity="0.625"
+                        y="0"
+                        x="96"
+                        width="24"
+                        height="24"
+                    />
+                    <rect
+                        :fill="colorCode"
+                        opacity="0.75"
+                        y="0"
+                        x="120"
+                        width="24"
+                        height="24"
+                    />
+                    <rect
+                        :fill="colorCode"
+                        opacity="0.875"
+                        y="0"
+                        x="144"
+                        width="24"
+                        height="24"
+                    />
+                    <rect
+                        :fill="colorCode"
+                        opacity="1"
+                        y="0"
+                        x="168"
+                        width="24"
+                        height="24"
+                    />
                 </g>
             </svg>
             <input
@@ -52,31 +112,36 @@
 </template>
 
 <script>
-import ColorPicker from 'vue-color-picker-wheel'
+import ColorPicker from './ColorPicker.vue'
 export default {
     name: 'ColorEditor',
     components: {
         ColorPicker,
     },
+    data(){
+        return {
+            selfColor: {r:255, g:0, b:0}
+        }
+    },
     computed: {
         id() {
             let selected = this.$store.getters.selected
-            if (selected.length === 1 )
-                return selected[0]
+            if (selected.length === 1) return selected[0]
             return null
         },
         layer() {
             return this.$store.state.symbolart.parts[this.id]
         },
-        colorCode() {
+        color() {
             let l = this.layer
             if (!l) {
-                return '#ffffff'
+                return this.selfColor
             }
-            let r = l.r.toString(16)
-            let g = l.g.toString(16)
-            let b = l.b.toString(16)
-            return '#' + r + g + b
+            return {r:l.r, g:l.g, b:l.b}
+        },
+        colorCode() {
+            let {r, g, b} = this.color
+            return 'rgb('+r+','+g+','+b+')'
         },
         alpha() {
             let l = this.layer
@@ -87,16 +152,17 @@ export default {
         },
     },
     methods: {
-        updateColor(colorCode) {
+        updateColor(color) {
+  
             if (!this.layer) {
+                this.selfColor = color
                 return
             }
-            let [r, g, b] = colorCode.length === 7? [1, 3, 5].map(i => parseInt(colorCode.substring(i, i + 2), 16))
-                : [1, 2, 3].map(i => parseInt(colorCode.substring(i, i + 1), 16) * 17)
+
             this.$store.commit('editPart', {
                 id: this.id,
-                edits: { r, g, b },
-                editType: 0b010
+                edits: color,
+                editType: 0b010,
             })
         },
         updateAlpha(e) {
@@ -107,9 +173,12 @@ export default {
             this.$store.commit('editPart', {
                 id: this.id,
                 edits: { a },
-                editType: 0b010
+                editType: 0b010,
             })
         },
+        finishUpdate(){
+
+        }
     },
 }
 </script>
@@ -148,23 +217,25 @@ export default {
     margin: 0;
 }
 #alpha-slider:hover {
-  opacity: 1; /* Fully shown on mouse-over */
+    opacity: 1; /* Fully shown on mouse-over */
 }
 #alpha-slider::-webkit-slider-thumb {
-  -webkit-appearance: none; /* Override default look */
-  appearance: none;
-  width: 24px;
-  height: 24px;
-  background: transparent; 
-  border: 2px solid black;
-  cursor: pointer;
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    background: transparent;
+    border: 2px solid white;
+    outline: 2px solid black;
+    cursor: pointer;
 }
 #alpha-slider::-moz-range-thumb {
-  width: 24px;
-  height: 24px;
-  background: transparent; 
-  border: 2px solid black;
-  cursor: pointer;
+    width: 24px;
+    height: 24px;
+    background: transparent;
+    border: 2px solid white;
+    outline: 2px solid black;
+    cursor: pointer;
 }
 </style>
 

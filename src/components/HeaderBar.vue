@@ -33,6 +33,7 @@ export default {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    white-space: nowrap;
 }
 .header > div {
     flex: 1 1;

@@ -1,21 +1,4 @@
 <template>
-<!--
-    <draggable 
-        :value="children"
-        @update="moveParts"
-        @add="moveParts"
-        :component-data="{attrs:{partId: partId}}"
-        :group="'nested'"
-        :invertSwap="true"
-        :swapThreshold="1"
-        :direction="'vertical'"
-        :fallbackOnBody="true"
-        :emptyInsertThreshold="5"
-        class="draggable_area"
-    >
-        <PartTab v-for="id in children" :key="id" :partId="id" />
-    </draggable>
--->
     <div ref="draggable" class="draggable_area" :partId="partId">
         <PartTab v-for="id in children" :key="id" :partId="id" />
     </div>
@@ -26,43 +9,48 @@ import Sortable from 'sortablejs'
 import PartTab from './PartTab.vue'
 export default {
     name: 'ChildPartsList',
-    mounted(){
+    mounted() {
         Sortable.create(this.$refs.draggable, {
-            onUpdate:this.moveParts,
-            onAdd:this.moveParts,
-            group:'nested',
-            invertSwap:true,
-            swapThreshold:1,
-            direction:'vertical',
-            fallbackOnBody:true,
-            emptyInsertThreshold:5
+            onUpdate: this.moveParts,
+            onAdd: this.moveParts,
+            group: 'nested',
+            invertSwap: true,
+            swapThreshold: 1,
+            direction: 'vertical',
+            fallbackOnBody: true,
+            emptyInsertThreshold: 5,
         })
     },
-    props:{
-        partId: {required: true}
+    props: {
+        partId: { required: true },
     },
     components: {
         PartTab,
     },
     computed: {
-        children(){
+        children() {
             return this.$store.state.symbolart.parts[this.partId].children
         },
     },
     methods: {
-        moveParts(e){
+        moveParts(e) {
             let parentOld = e.from.getAttribute('partId')
             let parentNew = e.to.getAttribute('partId')
             let indexOld = e.oldIndex
             let indexNew = e.newIndex
-            this.$store.commit('movePart',{parentOld, indexOld, parentNew, indexNew})
-        }
+            this.$store.commit('movePart', {
+                parentOld,
+                indexOld,
+                parentNew,
+                indexNew,
+            })
+        },
     },
 }
 </script>
 
 <style>
-.draggable_area{
+.draggable_area {
     min-height: 20px;
     display: flex;
     flex-direction: column;

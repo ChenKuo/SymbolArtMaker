@@ -29,14 +29,16 @@ const mutations = {
     // add a new layer under a parent at index(within the parent)
     addLayer(state, { parent, index }) {
         let part = Layer('Layer ' + state.lastId)
-        remember(state, [addParts(state, parent, index, part)])
+        let id = ++state.lastId
+        remember(state, [addPart(state, parent, index, id, part)])
     },
     addGroup(state, { parent, index }) {
         let part = Group('New Group')
-        remember(state, [addParts(state, parent, index, part)])
+        let id = ++state.lastId
+        remember(state, [addPart(state, parent, index, id, part)])
     },
     deletePart(state, { parent, index }) {
-        remember(state, [removeParts(state, parent, index, 1)])
+        remember(state, [removePart(state, parent, index)])
         Vue.delete(state.selected, state.parts[parent].children[index])
     },
     movePart(state, { parentOld, indexOld, parentNew, indexNew }) {
@@ -107,7 +109,7 @@ const mutations = {
             let redoer = redoers.pop()
             undoers.push(redoer(state))
         }
-        state.redoStack.push(redoers)
+        state.undoStack.push(undoers)
     },
 }
 
@@ -119,23 +121,17 @@ const remember = (state, undoers) => {
 /* these functions perform changes to the state 
 and return a function for undoing the change */
 
-// adding consecutive parts to same parent
-const addParts = (state, parent, index, ...parts) => {
-    let ids = []
-    for (let i = 0; i < parts.length; i++) {
-        let id = ++state.lastId
-        Vue.set(state.parts, id, parts[i])
-        ids.push(id)
-    }
-    state.parts[parent].children.splice(index, 0, ...ids)
-    return state => removeParts(state, parent, index, parts.length)
+const addPart = (state, parent, index, id, part) => {
+    Vue.set(state.parts, id, part)
+    state.parts[parent].children.splice(index, 0, id)
+    return state => removePart(state, parent, index)
 }
-// removing consecutive parts from same parent
-const removeParts = (state, parent, index, count) => {
-    let ids = state.parts[parent].children.splice(index, count)
-    let parts = ids.map(id => state.parts[id])
-    for (let i = 0; i < ids.length; i++) Vue.delete(state.parts, ids[i])
-    return state => addParts(state, parent, index, ...parts)
+
+const removePart = (state, parent, index) => {
+    let [id] = state.parts[parent].children.splice(index, 1)
+    let part = state.parts[id]
+    Vue.delete(state.parts, id)
+    return state => addPart(state, parent, index, id, part)
 }
 // moving consecutive parts from one parent(or index) to another
 const moveParts = (state, parentOld, indexOld, parentNew, indexNew, count) => {

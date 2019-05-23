@@ -22,8 +22,7 @@ export default {
         },
         LayerId() {
             let selected = this.$store.getters.selected
-            if (selected.length === 1)
-                return selected[0]
+            if (selected.length === 1) return selected[0]
             return null
         },
         layer() {
@@ -33,21 +32,27 @@ export default {
             return this.layer ? this.layer.type : null
         },
     },
-    watch:{
-        layerShape(shape){
-            if(shape == null) return
-            if(shape<512)
-                this.$refs.shapes[shape].scrollIntoView({block:'nearest'})
+    watch: {
+        layerShape(shape) {
+            if (shape == null) return
+            if (shape < 512)
+                this.$refs.shapes[shape].scrollIntoView({ block: 'nearest' })
             else
-                this.$refs.shapes[shape-512 + 325].scrollIntoView({block:'nearest'})
-        }
+                this.$refs.shapes[shape - 512 + 325].scrollIntoView({
+                    block: 'nearest',
+                })
+        },
     },
     methods: {
         updateShape(type) {
             if (!this.layer) {
                 return
             }
-            this.$store.commit('editPart', { id: this.LayerId, edits:{type}, editType: 0b100 })
+            this.$store.commit('editPart', {
+                id: this.LayerId,
+                edits: { type },
+                editType: 0b100,
+            })
         },
     },
 }
@@ -64,20 +69,27 @@ export default {
 
 <style scoped>
 .shape_thumb {
+    isolation: isolate;
     width: 38px;
     height: 38px;
-    background-color: black;
+    background-color: rgb(255, 255 , 255);
+    box-sizing: border-box;
+    border: 2px transparent;
+    filter: invert(0);
 }
 .shape_thumb:hover {
-    background-color: skyblue;
+    border: 2px solid rgba(255, 255, 255, 0.5);
     cursor: pointer;
 }
 .shape_image {
-    background-color: transparent;
+    background-color: black;
     width: 100%;
     height: 100%;
+    background-blend-mode: color;
+    mix-blend-mode: multiply;
+    filter: invert(0);
 }
 .active {
-    background-color: rgb(72, 177, 177);
+    border: 2px solid rgb(72, 177, 177);
 }
 </style>

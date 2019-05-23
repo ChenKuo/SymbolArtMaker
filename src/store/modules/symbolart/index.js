@@ -2,7 +2,6 @@ import mutations from './mutations.js'
 import actions from './actions.js'
 import { SymbolArt } from '@/js/SymbolArtParts.js'
 
-
 //state of a symbol art
 const state = {
     parts: { 0: SymbolArt() }, //all layers and groups in the symbol art, parts[0] is the symbol art itself
@@ -55,10 +54,8 @@ const getters = {
     },
     parentOf(state, getters) {
         return getters._info.parentOf
-    }
+    },
 }
-
-
 
 export default {
     state,

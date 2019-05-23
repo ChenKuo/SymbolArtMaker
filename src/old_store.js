@@ -51,8 +51,6 @@ const createLayerList = state => {
     return list
 }
 
-
-
 const mutations = {
     loadSymbolArt(state, sa) {
         let parts = {}

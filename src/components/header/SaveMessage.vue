@@ -1,22 +1,22 @@
 <template>
     <div class="save_message" v-on:click="onClickSave">
-        {{message}}
+        {{ message }}
     </div>
 </template>
 
 <script>
 export default {
     name: 'SaveMessage',
-    data(){
-        return{
-            message: 'save changes'
+    data() {
+        return {
+            message: 'save changes',
         }
     },
     methods: {
-        onClickSave(){
+        onClickSave() {
             this.message = "can't save yet"
-        }
-    }
+        },
+    },
 }
 </script>
 
@@ -28,5 +28,6 @@ export default {
     padding-left: 2px;
     padding-right: 2px;
     margin-left: 10px;
+    max-height: 100%;
 }
 </style>

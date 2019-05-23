@@ -1,5 +1,5 @@
 <template>
-    <ChildPartsList :partId ="0" class="sa_tree"/>
+    <ChildPartsList :partId="0" class="sa_tree" />
 </template>
 
 <script>
@@ -7,8 +7,8 @@ import ChildPartsList from './partsList/ChildPartsList.vue'
 export default {
     name: 'PartsList',
     components: {
-        ChildPartsList
-    }
+        ChildPartsList,
+    },
 }
 </script>
 

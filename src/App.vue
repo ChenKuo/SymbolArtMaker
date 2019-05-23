@@ -1,9 +1,9 @@
 <template>
     <div id="app">
+        <ViewerEditor id="middle" />
         <HeaderBar id="header" />
         <ToolBar id="top" />
         <PartsList id="left" />
-        <ViewerEditor id="middle" />
         <ColorShapeEditor id="right" />
         <FooterBar id="footer" />
     </div>

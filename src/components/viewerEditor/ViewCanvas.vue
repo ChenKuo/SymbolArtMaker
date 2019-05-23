@@ -78,33 +78,46 @@ export default {
             let flags = 0b000
             for (let i in layersToUpdate) {
                 let l = this.$store.state.symbolart.parts[i]
+                if(!l){
+                    console.log('parts has no '+l)
+                    break
+                }
                 let flag = layersToUpdate[i]
                 let index = this.$store.getters.indexOf[i]
                 flags |= flag
-                if(flag|0b100){
+                if (flag | 0b100) {
                     this.types.set([l.type, l.type, l.type, l.type], index * 4)
                 }
-                if(flag|0b010){
+                if (flag | 0b010) {
                     this.colors.set(
                         // eslint-disable-next-line prettier/prettier
                         [l.r, l.g, l.b, l.a, l.r, l.g, l.b, l.a, l.r, l.g, l.b, l.a, l.r, l.g, l.b, l.a],
                         index * 16
                     )
                 }
-                if(flag|0b001){
+                if (flag | 0b001) {
                     this.vertices.set(
-                    [l.lbx, l.lby, l.ltx, l.lty, l.rbx, l.rby, l.rtx, l.rty],
-                    index * 8
+                        [
+                            l.lbx,
+                            l.lby,
+                            l.ltx,
+                            l.lty,
+                            l.rbx,
+                            l.rby,
+                            l.rtx,
+                            l.rty,
+                        ],
+                        index * 8
                     )
                 }
             }
-            if(flags|0b100){
+            if (flags | 0b100) {
                 this.renderer.updateTypes(this.types)
             }
-            if(flags|0b010){
+            if (flags | 0b010) {
                 this.renderer.updateColors(this.colors)
             }
-            if(flags|0b001){
+            if (flags | 0b001) {
                 this.renderer.updateVertices(this.vertices)
             }
             this.render()

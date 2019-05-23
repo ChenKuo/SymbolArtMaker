@@ -46,7 +46,8 @@ export default {
                     const x = document.createElement('INPUT')
                     x.setAttribute('type', 'file')
                     x.click()
-                    x.onchange = () => this.$store.dispatch('loadSamlFile', x.files[0])
+                    x.onchange = () =>
+                        this.$store.dispatch('loadSamlFile', x.files[0])
                     break
                 }
             }

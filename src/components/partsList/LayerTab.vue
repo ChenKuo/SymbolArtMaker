@@ -45,12 +45,12 @@ export default {
             return this.$store.state.symbolart.shapeList[i].url
         },
     },
-    watch:{
-        selected(isSelected){
-            if(isSelected){
-                this.$el.scrollIntoView({ block:'nearest'})
+    watch: {
+        selected(isSelected) {
+            if (isSelected) {
+                this.$el.scrollIntoView({ block: 'nearest' })
             }
-        }
+        },
     },
     methods: {
         select() {

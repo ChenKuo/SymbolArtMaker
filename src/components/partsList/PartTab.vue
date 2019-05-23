@@ -1,6 +1,6 @@
 <template>
-    <GroupTab v-if="isGroup" :partId="partId"/>
-    <LayerTab v-else :partId="partId"/>
+    <GroupTab v-if="isGroup" :partId="partId" />
+    <LayerTab v-else :partId="partId" />
 </template>
 
 <script>
@@ -10,21 +10,18 @@ export default {
     name: 'PartTab',
     components: {
         GroupTab,
-        LayerTab
+        LayerTab,
     },
     props: {
-        partId : {required: true}
+        partId: { required: true },
     },
     computed: {
         isGroup() {
             return !!this.$store.state.symbolart.parts[this.partId].children
-        }
-    },
-    methods:{
-        onDragBegin(){
-            
         },
-    }
+    },
+    methods: {
+        onDragBegin() {},
+    },
 }
 </script>
-
