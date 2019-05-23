@@ -121,12 +121,12 @@ export default {
                 this.renderer.updateVertices(this.vertices)
             }
             this.render()
-            this.$store.commit('clearRenderUpdateRequest')
         },
         render() {
             this.resize()
             this.renderer.draw(this.layers.length)
             this.readyToRender = true
+            this.$store.commit('clearRenderUpdateRequest')
         },
         resize() {
             let canvas = this.canvas

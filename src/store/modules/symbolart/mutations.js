@@ -52,21 +52,15 @@ const mutations = {
     },
     //editType is 0b000 to 0b111 flags for shape, color, vertex edits
     editPart(state, { id, edits, editType }) {
-        remember(state, [editPart(state, id, edits)])
-        Vue.set(
-            state.requestRenderUpdate,
-            id,
-            state.requestRenderUpdate[id] | editType
-        )
+        remember(state, [editPart(state, id, edits, editType)])
     },
     // edit the part without saving to undo stack
     // must commit finishEdit as last edit
     continuousEdit(state, { id, edits, editType }) {
         //keep a copy of part before edit
-        if (!state.beforeEdit) {
+        if (!state.beforeEdit[id]) {
             state.beforeEdit[id] = Object.assign({}, state.parts[id], edits)
         }
-
         Object.assign(state.parts[id], edits)
         Vue.set(
             state.requestRenderUpdate,
@@ -78,12 +72,7 @@ const mutations = {
     finishEdit(state, { id, edits, editType }) {
         if (state.beforeEdit[id]) {
             state.parts[id] = state.beforeEdit[id]
-            remember(state, [editPart(state, id, edits)])
-            Vue.set(
-                state.requestRenderUpdate,
-                id,
-                state.requestRenderUpdate[id] | editType
-            )
+            remember(state, [editPart(state, id, edits, editType)])
             delete state.beforeEdit[id]
         }
     },
@@ -141,14 +130,19 @@ const moveParts = (state, parentOld, indexOld, parentNew, indexNew, count) => {
         moveParts(state, parentNew, indexNew, parentOld, indexOld, count)
 }
 // edit some properties of a part
-const editPart = (state, id, edits) => {
+const editPart = (state, id, edits, editType) => {
     let part = state.parts[id]
     for (let prop in edits) {
         let temp = part[prop]
         part[prop] = edits[prop]
         edits[prop] = temp
     }
-    return state => editPart(state, id, edits)
+    Vue.set(
+        state.requestRenderUpdate,
+        id,
+        state.requestRenderUpdate[id] | editType
+    )
+    return state => editPart(state, id, edits, editType)
 }
 
 export default mutations

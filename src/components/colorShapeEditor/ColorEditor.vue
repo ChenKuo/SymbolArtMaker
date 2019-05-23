@@ -3,7 +3,7 @@
         <ColorPicker
             :value="color"
             @color-change="updateColor"
-            @finish-edit="finishUpdate"
+            @finish-edit="finishUpdateColor"
             :size="200"
         />
         <div id="alpha-editor">
@@ -153,13 +153,11 @@ export default {
     },
     methods: {
         updateColor(color) {
-  
             if (!this.layer) {
                 this.selfColor = color
                 return
             }
-
-            this.$store.commit('editPart', {
+            this.$store.commit('continuousEdit', {
                 id: this.id,
                 edits: color,
                 editType: 0b010,
@@ -176,8 +174,16 @@ export default {
                 editType: 0b010,
             })
         },
-        finishUpdate(){
-
+        finishUpdateColor(color){
+            if (!this.layer) {
+                this.selfColor = color
+                return
+            }
+            this.$store.commit('finishEdit', {
+                id: this.id,
+                edits: color,
+                editType: 0b010,
+            })
         }
     },
 }

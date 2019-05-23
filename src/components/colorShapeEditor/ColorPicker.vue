@@ -11,15 +11,16 @@
     
         <g v-on:mousedown="beginDragHue">
             <circle class="hue-wheel" stroke="url(#hue-pattern)"/>
-            <circle :style="huePickerStyle"/>
+            <circle class="hue-picker-inner" :style="huePickerStyle" :class="{active: editingHue}"/>
+            <circle class="hue-picker-outer" :style="huePickerStyle" :class="{active: editingHue}"/>
         </g>
         <circle class="blocker"/>
         <g class="hsl-triangle" v-on:mousedown="beginDragSatLum">  
             <polygon ref="triangle" :points="a" transform="scale(0.84)" :fill="hueColor" class="hue"/>
             <polygon :points="a" transform="scale(0.84)" fill="url(#sat-lum-mask)" class="sl"/>
             <g :transform="transformSatLum">
-                <circle cx="0" cy="0" class="sl-picker-inner"/>
-                <circle cx="0" cy="0" class="sl-picker-outer"/>
+                <circle cx="0" cy="0" class="sl-picker-inner" :class="{active: editingSatLum}"/>
+                <circle cx="0" cy="0" class="sl-picker-outer" :class="{active: editingSatLum}"/>
             </g>
         </g>
     </svg>
@@ -35,30 +36,39 @@ export default {
     },
     data(){
         return{
-            currentHue: 0,
+            currentHSL: {h:0, s:1, l:0.5},
+            currentRGB: {r: 255, g:0, b:0},
             satLumMask: "",
             hueImg: "",
             a:"0,1 0.8660254,-0.5 -0.8660254,-0.5",
-            animationFrame: true
+            animationFrame: true,
+            editingHue: false,
+            editingSatLum: false,
         }
     },
     computed:{
         hsl:{
             get(){
                 const {r,g,b} = this.value
+                const c = this.currentRGB
+                if(c.r === r&& c.g ===g && c.b === b){
+                    return this.currentHSL
+                }
+                this.currentRGB = {r,g,b}
                 let hsl = RGBToHSL(r,g,b)
                 if(r===g && g===b){
-                    hsl.h = this.currentHue
+                    hsl.h = this.currentHSL.h
                 }
                 else{
-                    this.currentHue = hsl.h
+                    this.currentHSL = hsl
                 }
                 return hsl
             },
             set(hsl){
-                this.currentHue = hsl.h
-                const color = HSLToRGB(hsl)
-                this.$emit('color-change',color)
+                this.currentHSL = hsl
+                const rgb = HSLToRGB(hsl)
+                this.currentRGB = rgb
+                this.$emit('color-change',rgb)
             }
         },
         hueColor(){
@@ -71,11 +81,7 @@ export default {
             const y = r*Math.sin(rad)
             return {
                 cx:x,
-                cy:y,
-                r: 0.07,
-                fill:'transparent',
-                stroke: 'black',
-                strokeWidth: 0.02
+                cy:y
             }
         },
         transformSatLum(){
@@ -89,6 +95,7 @@ export default {
         beginDragHue(e){
             document.addEventListener('mousemove', this.onDragHue, false)
             document.addEventListener('mouseup', this.doneDragHue, false)
+            this.editingHue = true
             this.onDragHue(e)
         },
         onDragHue(e){
@@ -101,7 +108,7 @@ export default {
                     const x = offsetX-0.5*this.size
                     const y = offsetY - 0.5*this.size
                     const deg = Math.atan2(y, x) * 180/Math.PI
-                    const h = deg<0? -deg: 360 - deg
+                    const h = deg<=0? -deg: 360 - deg
                     const {s,l} = this.hsl
                     this.hsl = {h, s, l}
                     this.animationFrame = true
@@ -111,11 +118,13 @@ export default {
         doneDragHue(e){
             document.removeEventListener('mousemove', this.onDragHue, false)
             document.removeEventListener('mouseup', this.doneDragHue, false)
-            this.$emit('finish-edit')
+            this.editingHue = false
+            this.$emit('finish-edit', this.currentRGB)
         },
         beginDragSatLum(e){
             document.addEventListener('mousemove', this.onDragSatLum, false)
             document.addEventListener('mouseup', this.doneDragSatLum, false)
+            this.editingSatLum = true
             this.onDragSatLum(e)
             
         },
@@ -130,7 +139,7 @@ export default {
                     const minL = s/2
                     const maxL = 1 - s/2
                     const l = Math.max(minL, Math.min(x, maxL))
-                    this.hsl = {h: this.currentHue, s, l}
+                    this.hsl = {h: this.currentHSL.h, s, l}
                     this.animationFrame = true
                 })
             }
@@ -138,7 +147,8 @@ export default {
         doneDragSatLum(e){
             document.removeEventListener('mousemove', this.onDragSatLum, false)
             document.removeEventListener('mouseup', this.doneDragSatLum, false)
-            this.$emit('finish-edit')
+            this.editingSatLum = false
+            this.$emit('finish-edit', this.currentRGB)
         }
     },
     mounted(){
@@ -239,5 +249,25 @@ export default {
     stroke-width: 0.021;
     opacity: 0.6;
 }
+.hue-picker-inner{
+    r: 0.05;
+    fill: transparent;
+    stroke: black;
+    stroke-width: 0.02;
+    opacity: 0.4;
+}
+.hue-picker-outer{
+    r: 0.07;
+    fill: transparent;
+    stroke: white;
+    stroke-width: 0.02;
+    opacity: 0.6;
+}
 </style>
+<style scoped>
+.active{
+    opacity: 1;
+}
+</style>
+
 
