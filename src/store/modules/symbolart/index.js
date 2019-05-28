@@ -28,7 +28,7 @@ const getters = {
         let parentOf = {}
         //recursive depth-first traversal of parts
         const DFT = (index, children, parentId) => {
-            for (let i = 0; i < children.length; i++) {
+            for (let i = children.length - 1; i >= 0; i--) {
                 let id = children[i]
                 let child = parts[id]
                 parentOf[id] = parentId

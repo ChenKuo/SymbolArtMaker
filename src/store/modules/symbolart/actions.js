@@ -1,4 +1,4 @@
-import loadSaml from '@/js/SymbolArtLoader'
+import { loadSaml } from '@/js/SymbolArtLoader'
 
 const actions = {
     loadSamlFile({ commit }, file) {

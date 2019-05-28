@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import {hsl2rgb, HSLToRGB, rgb2hsl, RGBToHSL} from './rgb-hsl'
+import {hsl2rgb, HCLToRGB, rgb2hsl, RGBToHCL} from './rgb-hsl'
 // this component emits 'color-change' and 'finish-edit'
 export default {
     props:{
@@ -55,7 +55,7 @@ export default {
                     return this.currentHSL
                 }
                 this.currentRGB = {r,g,b}
-                let hsl = RGBToHSL(r,g,b)
+                let hsl = RGBToHCL(r,g,b)
                 if(r===g && g===b){
                     hsl.h = this.currentHSL.h
                 }
@@ -66,7 +66,7 @@ export default {
             },
             set(hsl){
                 this.currentHSL = hsl
-                const rgb = HSLToRGB(hsl)
+                const rgb = HCLToRGB(hsl)
                 this.currentRGB = rgb
                 this.$emit('color-change',rgb)
             }

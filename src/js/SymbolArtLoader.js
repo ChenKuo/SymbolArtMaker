@@ -23,16 +23,16 @@ const samlToSA = saml => {
     let parts = {
         0: SymbolArt(sa.attributes.name, sa.attributes.visible === 'true', []),
     }
-    let lastId = recursiveAdd(parts, 0)
+    let lastId = recursiveAdd(parts, 0, sa.elements)
     return { parts, lastId }
 }
 
 //recursively (depth-first) add parts[id]'s children to parts
 // this function modify parts and the items in it
 // return id of last added part
-const recursiveAdd = (parts, id) => {
+const recursiveAdd = (parts, id, elements) => {
     let part = parts[id]
-    let children = part.elements
+    let children = elements
     for (let i = 0; i < children.length; i++) {
         let child = children[i]
         let attr = child.attributes
@@ -46,7 +46,7 @@ const recursiveAdd = (parts, id) => {
             let childId = ++id
             part.children.push(childId)
             parts[childId] = group
-            id = recursiveAdd(parts, id)
+            id = recursiveAdd(parts, childId, child.elements)
         }
     }
     return id
@@ -58,7 +58,7 @@ const makeLayer = attr => {
     const [r, g, b] = [1, 3, 5].map(i =>
         parseInt(attr.color.substring(i, i + 2), 16)
     )
-    const a = attr.alpha
+    const a = attr.alpha * 255
     const { name, ltx, lty, lbx, lby, rtx, rty, rbx, rby } = attr
     return Layer(
         name,
