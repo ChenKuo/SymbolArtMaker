@@ -162,7 +162,7 @@ const RGBToHCL = rgb => {
         cmax = Math.max(r, g, b),
         delta = cmax - cmin,
         h = 0,
-        s = 0,
+        c = 0,
         l = 0
     // Calculate hue
     // No difference
@@ -174,7 +174,7 @@ const RGBToHCL = rgb => {
     // Blue is max
     else h = (r - g) / delta + 4
 
-    h = Math.round(h * 60)
+    h = h * 60
 
     // Make negative hues positive behind 360°
     if (h < 0) h += 360
@@ -183,9 +183,8 @@ const RGBToHCL = rgb => {
     l = (cmax + cmin) / 2
 
     // Calculate saturation
-    s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1))
+    c = delta
 
-    const c = (1 - Math.abs(2 * l - 1)) * s
     return { h, c, l }
 }
 export { rgb2hsl, hsl2rgb, HSLToRGB, RGBToHSL, HCLToRGB, RGBToHCL }

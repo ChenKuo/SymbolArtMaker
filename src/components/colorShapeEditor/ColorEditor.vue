@@ -130,7 +130,7 @@ export default {
             return null
         },
         layer() {
-            return this.$store.state.symbolart.parts[this.id]
+            return this.id && this.$store.state.symbolart.parts[this.id]
         },
         color() {
             let l = this.layer

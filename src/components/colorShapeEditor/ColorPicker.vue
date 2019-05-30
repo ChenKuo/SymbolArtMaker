@@ -36,7 +36,7 @@ export default {
     },
     data(){
         return{
-            currentHSL: {h:0, s:1, l:0.5},
+            currentHCL: {h:0, c:1, l:0.5},
             currentRGB: {r: 255, g:0, b:0},
             satLumMask: "",
             hueImg: "",
@@ -47,26 +47,32 @@ export default {
         }
     },
     computed:{
-        hsl:{
+        hsl(){
+            const {h,c,l} = this.hcl
+            let s = 0
+            if(0 < l && l < 1){
+                s = c / (1 - Math.abs(2*l -1))
+            }
+            return {h,s,l}
+        },
+        hcl:{
             get(){
-                const {r,g,b} = this.value
+                const v = this.value
                 const c = this.currentRGB
-                if(c.r === r&& c.g ===g && c.b === b){
-                    return this.currentHSL
+                if(c.r === v.r && c.g === v.g && c.b === v.b){
+                    return this.currentHCL
                 }
-                this.currentRGB = {r,g,b}
-                let hsl = RGBToHCL(r,g,b)
-                if(r===g && g===b){
-                    hsl.h = this.currentHSL.h
+                this.currentRGB = v
+                let hcl = RGBToHCL(v)
+                if(v.r===v.g && v.g===v.b){
+                    hcl.h = this.currentHCL.h
                 }
-                else{
-                    this.currentHSL = hsl
-                }
-                return hsl
+                this.currentHCL = hcl
+                return hcl
             },
-            set(hsl){
-                this.currentHSL = hsl
-                const rgb = HCLToRGB(hsl)
+            set(hcl){
+                this.currentHCL = hcl
+                const rgb = HCLToRGB(hcl)
                 this.currentRGB = rgb
                 this.$emit('color-change',rgb)
             }
@@ -75,7 +81,7 @@ export default {
             return 'hsl('+this.hsl.h+', 100%, 50%)'
         },
         huePickerStyle(){
-            const rad = 2*Math.PI*this.hsl.h/360 
+            const rad = 2*Math.PI*this.hcl.h/360 
             const r = 0.92
             const x = r*Math.cos(rad)
             const y = r*Math.sin(rad)
@@ -85,9 +91,9 @@ export default {
             }
         },
         transformSatLum(){
-            const {s,l} = this.hsl
+            const {c,l} = this.hcl
             const x = (l-0.5)*1.455
-            const y = (s-0.5)*1.26+0.21
+            const y = (c-0.5)*1.26+0.21
             return 'translate('+x+','+y+')'
         }
     },
@@ -109,8 +115,8 @@ export default {
                     const y = offsetY - 0.5*this.size
                     const deg = Math.atan2(y, x) * 180/Math.PI
                     const h = deg<=0? -deg: 360 - deg
-                    const {s,l} = this.hsl
-                    this.hsl = {h, s, l}
+                    const {c,l} = this.hcl
+                    this.hcl = {h, c, l}
                     this.animationFrame = true
                 })
             }
@@ -135,11 +141,11 @@ export default {
                     const boundingBox = this.$refs.triangle.getBoundingClientRect()
                     const x = (e.clientX - boundingBox.left)/boundingBox.width
                     const y = (boundingBox.bottom - e.clientY)/boundingBox.height
-                    const s = Math.max(0, Math.min(y, 1))
-                    const minL = s/2
-                    const maxL = 1 - s/2
+                    const c = Math.max(0, Math.min(y, 1))
+                    const minL = c/2
+                    const maxL = 1 - c/2
                     const l = Math.max(minL, Math.min(x, maxL))
-                    this.hsl = {h: this.currentHSL.h, s, l}
+                    this.hcl = {h: this.currentHCL.h, c, l}
                     this.animationFrame = true
                 })
             }
