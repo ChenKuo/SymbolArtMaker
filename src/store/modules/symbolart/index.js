@@ -43,6 +43,7 @@ const getters = {
             return index
         }
         DFT(0, parts[0].children, 0)
+        console.log('parts changed')
         return { layers, indexOf, parentOf }
     },
     layers(state, getters) {

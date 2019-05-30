@@ -59,7 +59,7 @@ const mutations = {
     continuousEdit(state, { id, edits, editType }) {
         //keep a copy of part before edit
         if (!state.beforeEdit[id]) {
-            state.beforeEdit[id] = Object.assign({}, state.parts[id], edits)
+            state.beforeEdit[id] = Object.assign({}, state.parts[id])
         }
         Object.assign(state.parts[id], edits)
         Vue.set(
@@ -71,7 +71,7 @@ const mutations = {
     // edits must contain all properties changed during continuousEdit
     finishEdit(state, { id, edits, editType }) {
         if (state.beforeEdit[id]) {
-            state.parts[id] = state.beforeEdit[id]
+            Object.assign(state.parts[id], state.beforeEdit[id])
             remember(state, [editPart(state, id, edits, editType)])
             delete state.beforeEdit[id]
         }

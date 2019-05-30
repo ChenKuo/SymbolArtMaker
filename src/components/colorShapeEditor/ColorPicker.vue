@@ -197,7 +197,8 @@ export default {
         for(let x = 0; x<res; x++){
             const l = x/(res-1)
             for(let y = 0; y<res; y++){
-                const s = y/(res-1)
+                const chroma = y/(res-1)
+                const s = chroma/(2*Math.min(l, 1-l))
                 let a = 1 - 2 * Math.min(l * s, (1 - l) * s)
                 let c = a > 0 ? (2 * l - 1 + a) * (0.5 / a) : 0
                 a*=255
