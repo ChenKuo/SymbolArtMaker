@@ -39,7 +39,6 @@ const mutations = {
     },
     deletePart(state, { parent, index }) {
         remember(state, [removePart(state, parent, index)])
-        Vue.delete(state.selected, state.parts[parent].children[index])
     },
     movePart(state, { parentOld, indexOld, parentNew, indexNew }) {
         remember(state, [
@@ -119,6 +118,7 @@ const addPart = (state, parent, index, id, part) => {
 const removePart = (state, parent, index) => {
     let [id] = state.parts[parent].children.splice(index, 1)
     let part = state.parts[id]
+    Vue.delete(state.selected, id)
     Vue.delete(state.parts, id)
     return state => addPart(state, parent, index, id, part)
 }
@@ -134,14 +134,16 @@ const editPart = (state, id, edits, editType) => {
     let part = state.parts[id]
     for (let prop in edits) {
         let temp = part[prop]
-        part[prop] = Math.round(edits[prop])
+        part[prop] = Math.round(edits[prop]) || edits[prop]
         edits[prop] = temp
     }
-    Vue.set(
-        state.requestRenderUpdate,
-        id,
-        state.requestRenderUpdate[id] | editType
-    )
+    if (editType) {
+        Vue.set(
+            state.requestRenderUpdate,
+            id,
+            state.requestRenderUpdate[id] | editType
+        )
+    }
     return state => editPart(state, id, edits, editType)
 }
 

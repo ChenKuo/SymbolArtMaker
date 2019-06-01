@@ -2,7 +2,15 @@
     <div class="group_tab" :class="{selected}">
         <div class="group_handle">
             <CollapseImg class="collapse_img" />
-            <span>{{ name }}</span>
+            <NameInput v-if="editingName" 
+                :value="name"
+                :id="partId"
+                v-on:finished="editingName=false"
+                class="name" 
+            />
+            <div v-else v-on:click="editingName=true" class="name">
+                {{ name }}
+            </div>
             <input type="checkbox" />
         </div>
         <ChildPartsList
@@ -14,17 +22,20 @@
 </template>
 
 <script>
+import NameInput from './NameInput.vue'
 import CollapseImg from '@/assets/play.svg'
 export default {
     name: 'GroupTab',
     data() {
         return {
             expanded: true,
+            editingName: false
         }
     },
     components: {
         ChildPartsList: () => import('./ChildPartsList.vue'),
         CollapseImg,
+        NameInput
     },
     props: {
         partId: { required: true },
@@ -74,11 +85,14 @@ export default {
 
 <style scoped>
 .selected {
-    border-left: 3px solid #9bd;
-    border-bottom: 2px solid #9bd;
+    border-left: 3px solid #8ad;
+    border-bottom: 2px solid #8ad;
 }
 .selected > .group_handle{
     background-color: #8ad;
     
+}
+.name{
+    width: 60%;
 }
 </style>

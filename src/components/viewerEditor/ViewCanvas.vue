@@ -78,6 +78,7 @@ export default {
             let layersToUpdate = this.updateRequest
             let flags = 0b000
             let lastIndex = this.layers.length-1
+            const layerIndexOf = this.$store.getters.layerIndexOf
             for (let i in layersToUpdate) {
                 let l = this.$store.state.symbolart.parts[i]
                 if(!l){
@@ -85,7 +86,7 @@ export default {
                     break
                 }
                 let flag = layersToUpdate[i]
-                let index = lastIndex-this.$store.getters.indexOf[i]
+                let index = lastIndex-layerIndexOf[i]
                 flags |= flag
                 if (flag | 0b100) {
                     this.types.set([l.type, l.type, l.type, l.type], index * 4)

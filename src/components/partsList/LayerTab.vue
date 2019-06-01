@@ -3,13 +3,30 @@
         :class="{selected}"
     >
         <img class="image" :style="imageStyle" :src="imageSrc" />
-        <div>{{ name }}</div>
+        <NameInput v-if="editingName" 
+            :value="name"
+            :id="partId"
+            v-on:finished="editingName=false"
+            class="name" 
+        />
+        <div v-else v-on:click="editingName=true" class="name">{{ name }}</div>
     </div>
 </template>
 
 <script>
+import NameInput from './NameInput'
 export default {
-    props: { partId: { type: Number, required: true } },
+    components:{
+        NameInput
+    },
+    props: { 
+        partId: { type: Number, required: true } 
+    },
+    data(){
+        return {
+            editingName: false
+        }
+    },
     computed: {
         part() {
             return this.$store.state.symbolart.parts[this.partId]
@@ -54,6 +71,7 @@ export default {
     display: flex;
     align-items: center;
 }
+
 </style>
 
 <style scoped>
@@ -63,7 +81,9 @@ export default {
     margin-right: 4px;
     margin-left: 4px;
 }
-
+.name{
+    width: 60%;
+}
 .selected {
     color: white;
     background-color: lightskyblue;

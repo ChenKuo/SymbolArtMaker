@@ -67,22 +67,25 @@ export default {
     },
     methods: {
         addLayer() {
-            let selectedId = this.selected[0]
-            let parent = this.$store.getters.parentOf[selectedId] || 0
-            let index = this.$store.getters.indexOf[selectedId] || 0
+            const selectedId = this.selected[0]
+            const partInfo = this.$store.getters.partInfo(selectedId)
+            const parent = partInfo && partInfo.parentId || 0
+            const index = partInfo && partInfo.index || 0
             this.$store.commit('addLayer', { parent, index })
         },
         addGroup() {
-            let selectedId = this.selected[0]
-            let parent = this.$store.getters.parentOf[selectedId] || 0
-            let index = this.$store.getters.indexOf[selectedId] || 0
+            const selectedId = this.selected[0]
+            const partInfo = this.$store.getters.partInfo(selectedId)
+            const parent = partInfo && partInfo.parentId || 0
+            const index = partInfo && partInfo.index || 0
             this.$store.commit('addGroup', { parent, index })
         },
         deletePart() {
             if (this.selected.length === 1) {
-                let selectedId = this.selected[0]
-                let parent = this.$store.getters.parentOf[selectedId] || 0
-                let index = this.$store.getters.indexOf[selectedId] || 0
+                const selectedId = this.selected[0]
+                const partInfo = this.$store.getters.partInfo(selectedId)
+                const parent = partInfo && partInfo.parentId || 0
+                const index = partInfo && partInfo.index || 0
                 this.$store.commit('deletePart', { parent, index })
             }
         },
