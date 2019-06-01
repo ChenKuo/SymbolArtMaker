@@ -1,6 +1,6 @@
 <template>
-    <GroupTab v-if="isGroup" :partId="partId" />
-    <LayerTab v-else :partId="partId" />
+    <GroupTab v-if="isGroup" :partId="partId"/>
+    <LayerTab v-else :partId="partId"/>
 </template>
 
 <script>
@@ -19,9 +19,22 @@ export default {
         isGroup() {
             return !!this.$store.state.symbolart.parts[this.partId].children
         },
+        selected() {
+            return this.$store.state.symbolart.selected[this.partId]
+        },
     },
-    methods: {
-        onDragBegin() {},
+    watch: {
+        selected(isSelected) {
+            if (isSelected) {
+                this.$el.scrollIntoView({ block: 'nearest' })
+            }
+        },
     },
+    
 }
 </script>
+
+<style>
+
+</style>
+

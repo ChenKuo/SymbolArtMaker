@@ -1,8 +1,6 @@
 <template>
-    <div
-        class="layer_tab"
-        v-on:click.stop.prevent="select"
-        :class="{ selected: selected }"
+    <div class="layer_tab"
+        :class="{selected}"
     >
         <img class="image" :style="imageStyle" :src="imageSrc" />
         <div>{{ name }}</div>
@@ -13,14 +11,14 @@
 export default {
     props: { partId: { type: Number, required: true } },
     computed: {
-        selected() {
-            return this.$store.state.symbolart.selected[this.partId]
-        },
         part() {
             return this.$store.state.symbolart.parts[this.partId]
         },
         name() {
             return this.part.name
+        },
+        selected() {
+            return this.$store.state.symbolart.selected[this.partId]
         },
         imageStyle() {
             let p = this.part
@@ -45,18 +43,6 @@ export default {
             return this.$store.state.symbolart.shapeList[i].url
         },
     },
-    watch: {
-        selected(isSelected) {
-            if (isSelected) {
-                this.$el.scrollIntoView({ block: 'nearest' })
-            }
-        },
-    },
-    methods: {
-        select() {
-            this.$store.commit('select', this.partId)
-        },
-    },
 }
 </script>
 
@@ -71,14 +57,15 @@ export default {
 </style>
 
 <style scoped>
-.selected {
-    color: white;
-    background-color: lightskyblue;
-}
 .image {
     height: 36px;
     width: 36px;
     margin-right: 4px;
     margin-left: 4px;
+}
+
+.selected {
+    color: white;
+    background-color: lightskyblue;
 }
 </style>

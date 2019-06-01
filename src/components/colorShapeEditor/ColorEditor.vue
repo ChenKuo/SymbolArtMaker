@@ -125,9 +125,7 @@ export default {
     },
     computed: {
         id() {
-            let selected = this.$store.getters.selected
-            if (selected.length === 1) return selected[0]
-            return null
+            return this.$store.getters.selectedLayerId
         },
         layer() {
             return this.id && this.$store.state.symbolart.parts[this.id]

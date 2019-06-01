@@ -54,9 +54,10 @@ export default {
     },
     methods: {
         rebuildListandRender() {
-            let list = this.layers
+            const list = this.layers
+            const lastIndex = list.length - 1
             for (let i = 0; i < list.length; i++) {
-                let l = this.$store.state.symbolart.parts[list[i]]
+                let l = this.$store.state.symbolart.parts[list[lastIndex-i]]
                 this.vertices.set(
                     [l.lbx, l.lby, l.ltx, l.lty, l.rbx, l.rby, l.rtx, l.rty],
                     i * 8
@@ -76,6 +77,7 @@ export default {
         updateAndRender() {
             let layersToUpdate = this.updateRequest
             let flags = 0b000
+            let lastIndex = this.layers.length-1
             for (let i in layersToUpdate) {
                 let l = this.$store.state.symbolart.parts[i]
                 if(!l){
@@ -83,7 +85,7 @@ export default {
                     break
                 }
                 let flag = layersToUpdate[i]
-                let index = this.$store.getters.indexOf[i]
+                let index = lastIndex-this.$store.getters.indexOf[i]
                 flags |= flag
                 if (flag | 0b100) {
                     this.types.set([l.type, l.type, l.type, l.type], index * 4)

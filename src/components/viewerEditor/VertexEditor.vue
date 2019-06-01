@@ -83,13 +83,15 @@ export default {
         }
     },
     computed: {
-        layerId() {
-            let selected = this.$store.getters.selected
-            if (selected.length === 1) return selected[0]
-            return null
+        selectedId() {
+            return this.$store.getters.selectedLayerId
         },
         layer() {
-            return this.$store.state.symbolart.parts[this.layerId]
+            const part = this.$store.state.symbolart.parts[this.selectedId]
+            if(!part || part.children){
+                return null
+            }
+            return part
         },
         // shortened for vertices
         v() {
@@ -103,7 +105,7 @@ export default {
         onDragStart(e) {
             let vert = e.srcElement.getAttribute('vert')
             if (!vert) return
-            this.editId = this.layerId
+            this.editId = this.selectedId
             this.dragVertex = vert.split(' ')
             this.dragStartX = e.x
             this.dragStartY = e.y

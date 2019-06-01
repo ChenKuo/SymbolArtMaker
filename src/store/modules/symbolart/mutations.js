@@ -134,7 +134,7 @@ const editPart = (state, id, edits, editType) => {
     let part = state.parts[id]
     for (let prop in edits) {
         let temp = part[prop]
-        part[prop] = edits[prop]
+        part[prop] = Math.round(edits[prop])
         edits[prop] = temp
     }
     Vue.set(

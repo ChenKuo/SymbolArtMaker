@@ -20,6 +20,17 @@ const getters = {
     selected(state) {
         return Object.keys(state.selected)
     },
+    // return the selected layer
+    selectedLayerId(state, getters) {
+        if (getters.selected.length === 1) {
+            const id = getters.selected[0]
+            const part = state.parts[id]
+            if (!part.children) {
+                return id
+            }
+        }
+        return null
+    },
     // array of layers id in order
     _info(state) {
         let parts = state.parts
@@ -28,7 +39,7 @@ const getters = {
         let parentOf = {}
         //recursive depth-first traversal of parts
         const DFT = (index, children, parentId) => {
-            for (let i = children.length - 1; i >= 0; i--) {
+            for (let i = 0; i < children.length; i++) {
                 let id = children[i]
                 let child = parts[id]
                 parentOf[id] = parentId

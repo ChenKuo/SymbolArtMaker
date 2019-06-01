@@ -1,5 +1,5 @@
 <template>
-    <div class="group_tab">
+    <div class="group_tab" :class="{selected}">
         <div class="group_handle">
             <CollapseImg class="collapse_img" />
             <span>{{ name }}</span>
@@ -36,6 +36,9 @@ export default {
         name() {
             return this.group.name
         },
+        selected() {
+            return this.$store.state.symbolart.selected[this.partId]
+        },
     },
 }
 </script>
@@ -66,5 +69,16 @@ export default {
     flex-direction: column;
     background-color: #ddd;
     padding-left: 3px;
+}
+</style>
+
+<style scoped>
+.selected {
+    border-left: 3px solid #9bd;
+    border-bottom: 2px solid #9bd;
+}
+.selected > .group_handle{
+    background-color: #8ad;
+    
 }
 </style>
