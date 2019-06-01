@@ -49,6 +49,9 @@ const mutations = {
         state.selected = {}
         state.selected[id] = true
     },
+    deselectAll(state) {
+        state.selected = {}
+    },
     //editType is 0b000 to 0b111 flags for shape, color, vertex edits
     editPart(state, { id, edits, editType }) {
         remember(state, [editPart(state, id, edits, editType)])

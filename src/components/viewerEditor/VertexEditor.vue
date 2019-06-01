@@ -3,7 +3,7 @@
         xmlns="http://www.w3.org/2000/svg"
         viewBox="-127 -127 255 255"
         transform="scale(1, 1)"
-        v-on:mousedown.self="selectLayerHit"
+        v-on:mousedown.self="onBackgroundClicked"
     >
         <g
             v-show="layer"
@@ -200,9 +200,23 @@ export default {
             }
         },
         selectNextLayerHit(e) {
-            const dir = Math.sign(e.deltaY)
-            this.selectLayerHit(e, this.layerIndex+dir, dir)
+            if (this.updateReady) {
+                requestAnimationFrame(() => {
+                    const dir = Math.sign(e.deltaY)
+                    this.selectLayerHit(e, this.layerIndex+dir, dir)
+                    this.updateReady = true
+                })
+                this.updateReady = false
+            }
         },
+        onBackgroundClicked(e){
+            if(this.layer){
+                this.$store.commit('deselectAll')
+            }
+            else{
+                this.selectLayerHit(e)
+            }
+        }
     },
 }
 
