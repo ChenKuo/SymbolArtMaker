@@ -13,6 +13,7 @@ const state = {
     //save change for undo redo
     undoStack: [],
     redoStack: [],
+    referenceImage: null,
 }
 
 const getters = {

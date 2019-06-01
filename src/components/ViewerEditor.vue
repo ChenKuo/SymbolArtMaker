@@ -41,6 +41,7 @@
                         height="100%"
                     />
                 </svg>
+                <img class="reference_image" :src="backgroundImage" />
                 <ViewCanvas class="canvas" />
             </div>
             <VertexEditor class="vert_editor" />
@@ -60,6 +61,11 @@ export default {
     components: {
         ViewCanvas,
         VertexEditor,
+    },
+    computed:{
+        backgroundImage(){
+            return this.$store.state.symbolart.referenceImage
+        }
     },
     methods: {
         center() {
@@ -101,6 +107,16 @@ export default {
     position: absolute;
 }
 .vert_editor {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+</style>
+
+<style scoped>
+.reference_image{
     top: 0;
     left: 0;
     width: 100%;

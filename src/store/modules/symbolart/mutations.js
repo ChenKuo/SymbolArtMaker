@@ -102,6 +102,9 @@ const mutations = {
         }
         state.undoStack.push(undoers)
     },
+    setReferenceImage(state, src) {
+        state.referenceImage = src
+    }
 }
 
 const remember = (state, undoers) => {

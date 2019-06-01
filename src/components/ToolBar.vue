@@ -8,7 +8,7 @@
             <button class="toolbar-btn" v-on:click="deletePart" :disabled="!selected.length"><DeleteImg /></button>
         </div>
         <div class="view_buttons">
-            <button class="toolbar-btn" disabled><PictureImg /></button>
+            <button class="toolbar-btn" v-on:click="loadReferenceImage"><PictureImg /></button>
             <button class="toolbar-btn" disabled><OpacityImg /></button>
             <button class="toolbar-btn" disabled><CubeImg /></button>
             <button class="toolbar-btn" disabled><SquareImg /></button>
@@ -36,6 +36,8 @@ import ZoomoutImg from './../assets/zoomout.svg'
 import ZoominImg from './../assets/zoomin.svg'
 import BotImg from './../assets/bot.svg'
 import SettingImg from './../assets/setting.svg'
+
+import {searchFile} from '@/js/File'
 
 export default {
     name: 'ToolBar',
@@ -66,6 +68,7 @@ export default {
         }
     },
     methods: {
+        // edit methods
         addLayer() {
             const selectedId = this.selected[0]
             const partInfo = this.$store.getters.partInfo(selectedId)
@@ -95,6 +98,10 @@ export default {
         redo() {
             this.$store.commit('redo')
         },
+        //View methods
+        loadReferenceImage() {
+            searchFile((file)=>this.$store.dispatch('loadReferenceImage', file))
+        }
     },
 }
 </script>
