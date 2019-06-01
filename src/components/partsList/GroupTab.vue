@@ -8,7 +8,7 @@
                 v-on:finished="editingName=false"
                 class="name" 
             />
-            <div v-else v-on:click="editingName=true" class="name">
+            <div v-else v-on:dblclick="editingName=true" class="name">
                 {{ name }}
             </div>
             <input type="checkbox" />

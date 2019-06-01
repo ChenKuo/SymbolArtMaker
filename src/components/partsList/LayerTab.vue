@@ -9,7 +9,7 @@
             v-on:finished="editingName=false"
             class="name" 
         />
-        <div v-else v-on:click="editingName=true" class="name">{{ name }}</div>
+        <div v-else v-on:dblclick="editingName=true" class="name">{{ name }}</div>
     </div>
 </template>
 

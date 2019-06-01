@@ -37,8 +37,13 @@ export default {
 #sa-title {
     justify-content: center;
 }
+
+</style>
+
+<style scoped>
 .name{
     width: 100%;
     height: 100%;
 }
 </style>
+

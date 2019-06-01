@@ -93,6 +93,9 @@ export default {
             }
             return part
         },
+        layerIndex(){
+            return this.$store.getters.layerIndexOf[this.selectedId]
+        },
         // shortened for vertices
         v() {
             return this.layer || {}
@@ -158,16 +161,15 @@ export default {
             document.removeEventListener('mousemove', this.onDragging, false)
             document.removeEventListener('mouseup', this.onDragEnd, false)
         },
-        selectLayerHit(e, from = -1, dir = -1) {
+        selectLayerHit(e, from = 0, dir = 1) {
             if (!this.layers) return
             let clientRect = this.$el.getBoundingClientRect()
             let x = (e.pageX - clientRect.left - 512) * (256 / 1024)
             let y = (e.pageY - clientRect.top - 512) * (256 / 1024)
-            from = this.layers.length + from
-            for (let i = 0; i < this.layers.length; i++) {
+            let i = from
+            while ( 0 <= i && i < this.layers.length) {
                 //check if x,y lies inside the layer
-                let j = (from + i * dir) % this.layers.length
-                let id = this.layers[j]
+                let id = this.layers[i]
                 let l = this.$store.state.symbolart.parts[id]
                 if (
                     pointInTriangle(
@@ -194,11 +196,12 @@ export default {
                     this.$store.commit('select', id)
                     return
                 }
+                i += dir
             }
         },
         selectNextLayerHit(e) {
-            let dir = -Math.sign(e.deltaY)
-            this.selectLayerHit(e, this.layer.index + dir, +dir)
+            const dir = Math.sign(e.deltaY)
+            this.selectLayerHit(e, this.layerIndex+dir, dir)
         },
     },
 }
