@@ -1,6 +1,11 @@
 <template>
     <div ref="draggable" class="draggable_area" :partId="partId">
-        <PartTab v-for="id in children" :key="id" :partId="id" v-on:click.native.stop="select(id)"/>
+        <PartTab
+            v-for="id in children"
+            :key="id"
+            :partId="id"
+            v-on:click.native.stop="select(id)"
+        />
     </div>
 </template>
 
@@ -50,7 +55,6 @@ export default {
         select(id) {
             this.$store.commit('select', id)
         },
-
     },
 }
 </script>

@@ -62,10 +62,10 @@ export default {
         ViewCanvas,
         VertexEditor,
     },
-    computed:{
-        backgroundImage(){
+    computed: {
+        backgroundImage() {
             return this.$store.state.symbolart.referenceImage
-        }
+        },
     },
     methods: {
         center() {
@@ -116,7 +116,7 @@ export default {
 </style>
 
 <style scoped>
-.reference_image{
+.reference_image {
     top: 0;
     left: 0;
     width: 100%;

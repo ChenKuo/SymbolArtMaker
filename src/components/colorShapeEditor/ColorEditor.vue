@@ -118,9 +118,9 @@ export default {
     components: {
         ColorPicker,
     },
-    data(){
+    data() {
         return {
-            selfColor: {r:255, g:0, b:0}
+            selfColor: { r: 255, g: 0, b: 0 },
         }
     },
     computed: {
@@ -135,11 +135,11 @@ export default {
             if (!l) {
                 return this.selfColor
             }
-            return {r:l.r, g:l.g, b:l.b}
+            return { r: l.r, g: l.g, b: l.b }
         },
         colorCode() {
-            let {r, g, b} = this.color
-            return 'rgb('+r+','+g+','+b+')'
+            let { r, g, b } = this.color
+            return 'rgb(' + r + ',' + g + ',' + b + ')'
         },
         alpha() {
             let l = this.layer
@@ -172,7 +172,7 @@ export default {
                 editType: 0b010,
             })
         },
-        finishUpdateColor(color){
+        finishUpdateColor(color) {
             if (!this.layer) {
                 this.selfColor = color
                 return
@@ -182,7 +182,7 @@ export default {
                 edits: color,
                 editType: 0b010,
             })
-        }
+        },
     },
 }
 </script>

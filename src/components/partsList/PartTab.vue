@@ -1,6 +1,6 @@
 <template>
-    <GroupTab v-if="isGroup" :partId="partId"/>
-    <LayerTab v-else :partId="partId"/>
+    <GroupTab v-if="isGroup" :partId="partId" />
+    <LayerTab v-else :partId="partId" />
 </template>
 
 <script>
@@ -30,11 +30,7 @@ export default {
             }
         },
     },
-    
 }
 </script>
 
-<style>
-
-</style>
-
+<style></style>

@@ -1,30 +1,31 @@
 <template>
-    <div class="layer_tab"
-        :class="{selected}"
-    >
+    <div class="layer_tab" :class="{ selected }">
         <img class="image" :style="imageStyle" :src="imageSrc" />
-        <NameInput v-if="editingName" 
+        <NameInput
+            v-if="editingName"
             :value="name"
             :id="partId"
-            v-on:finished="editingName=false"
-            class="name" 
+            v-on:finished="editingName = false"
+            class="name"
         />
-        <div v-else v-on:dblclick="editingName=true" class="name">{{ name }}</div>
+        <div v-else v-on:dblclick="editingName = true" class="name">
+            {{ name }}
+        </div>
     </div>
 </template>
 
 <script>
 import NameInput from './NameInput'
 export default {
-    components:{
-        NameInput
+    components: {
+        NameInput,
     },
-    props: { 
-        partId: { type: Number, required: true } 
+    props: {
+        partId: { type: Number, required: true },
     },
-    data(){
+    data() {
         return {
-            editingName: false
+            editingName: false,
         }
     },
     computed: {
@@ -71,7 +72,6 @@ export default {
     display: flex;
     align-items: center;
 }
-
 </style>
 
 <style scoped>
@@ -81,7 +81,7 @@ export default {
     margin-right: 4px;
     margin-left: 4px;
 }
-.name{
+.name {
     width: 60%;
 }
 .selected {

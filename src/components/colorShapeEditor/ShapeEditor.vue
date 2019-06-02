@@ -70,7 +70,7 @@ export default {
     isolation: isolate;
     width: 38px;
     height: 38px;
-    background-color: rgb(255, 255 , 255);
+    background-color: rgb(255, 255, 255);
     box-sizing: border-box;
     border: 2px transparent;
     filter: invert(0);

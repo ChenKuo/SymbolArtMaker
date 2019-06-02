@@ -44,7 +44,7 @@ const getters = {
             for (let i = 0; i < children.length; i++) {
                 let id = children[i]
                 let child = parts[id]
-                partsInfo[id] = { parentId, index: i}
+                partsInfo[id] = { parentId, index: i }
                 if (child.children) {
                     index = DFT(index, child.children, id)
                 } else {

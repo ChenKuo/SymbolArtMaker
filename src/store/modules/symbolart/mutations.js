@@ -104,7 +104,7 @@ const mutations = {
     },
     setReferenceImage(state, src) {
         state.referenceImage = src
-    }
+    },
 }
 
 const remember = (state, undoers) => {

@@ -88,12 +88,12 @@ export default {
         },
         layer() {
             const part = this.$store.state.symbolart.parts[this.selectedId]
-            if(!part || part.children){
+            if (!part || part.children) {
                 return null
             }
             return part
         },
-        layerIndex(){
+        layerIndex() {
             return this.$store.getters.layerIndexOf[this.selectedId]
         },
         // shortened for vertices
@@ -167,7 +167,7 @@ export default {
             let x = (e.pageX - clientRect.left - 512) * (256 / 1024)
             let y = (e.pageY - clientRect.top - 512) * (256 / 1024)
             let i = from
-            while ( 0 <= i && i < this.layers.length) {
+            while (0 <= i && i < this.layers.length) {
                 //check if x,y lies inside the layer
                 let id = this.layers[i]
                 let l = this.$store.state.symbolart.parts[id]
@@ -203,20 +203,19 @@ export default {
             if (this.updateReady) {
                 requestAnimationFrame(() => {
                     const dir = Math.sign(e.deltaY)
-                    this.selectLayerHit(e, this.layerIndex+dir, dir)
+                    this.selectLayerHit(e, this.layerIndex + dir, dir)
                     this.updateReady = true
                 })
                 this.updateReady = false
             }
         },
-        onBackgroundClicked(e){
-            if(this.layer){
+        onBackgroundClicked(e) {
+            if (this.layer) {
                 this.$store.commit('deselectAll')
-            }
-            else{
+            } else {
                 this.selectLayerHit(e)
             }
-        }
+        },
     },
 }
 

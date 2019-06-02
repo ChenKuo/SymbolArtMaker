@@ -1,14 +1,15 @@
 <template>
-    <div class="group_tab" :class="{selected}">
+    <div class="group_tab" :class="{ selected }">
         <div class="group_handle">
             <CollapseImg class="collapse_img" />
-            <NameInput v-if="editingName" 
+            <NameInput
+                v-if="editingName"
                 :value="name"
                 :id="partId"
-                v-on:finished="editingName=false"
-                class="name" 
+                v-on:finished="editingName = false"
+                class="name"
             />
-            <div v-else v-on:dblclick="editingName=true" class="name">
+            <div v-else v-on:dblclick="editingName = true" class="name">
                 {{ name }}
             </div>
             <input type="checkbox" />
@@ -29,13 +30,13 @@ export default {
     data() {
         return {
             expanded: true,
-            editingName: false
+            editingName: false,
         }
     },
     components: {
         ChildPartsList: () => import('./ChildPartsList.vue'),
         CollapseImg,
-        NameInput
+        NameInput,
     },
     props: {
         partId: { required: true },
@@ -88,11 +89,10 @@ export default {
     border-left: 3px solid #8ad;
     border-bottom: 2px solid #8ad;
 }
-.selected > .group_handle{
+.selected > .group_handle {
     background-color: #8ad;
-    
 }
-.name{
+.name {
     width: 60%;
 }
 </style>

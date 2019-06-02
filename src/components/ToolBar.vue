@@ -1,14 +1,30 @@
 <template>
     <div class="toolbar">
         <div class="edit_buttons">
-            <button class="toolbar-btn" v-on:click="addLayer"><AddImg /></button>
-            <button class="toolbar-btn" v-on:click="addGroup"><GroupImg /></button>
-            <button class="toolbar-btn" v-on:click="undo" :disabled="undoEmpty"><UndoImg /></button>
-            <button class="toolbar-btn" v-on:click="redo" :disabled="redoEmpty"><RedoImg /></button>
-            <button class="toolbar-btn" v-on:click="deletePart" :disabled="!selected.length"><DeleteImg /></button>
+            <button class="toolbar-btn" v-on:click="addLayer">
+                <AddImg />
+            </button>
+            <button class="toolbar-btn" v-on:click="addGroup">
+                <GroupImg />
+            </button>
+            <button class="toolbar-btn" v-on:click="undo" :disabled="undoEmpty">
+                <UndoImg />
+            </button>
+            <button class="toolbar-btn" v-on:click="redo" :disabled="redoEmpty">
+                <RedoImg />
+            </button>
+            <button
+                class="toolbar-btn"
+                v-on:click="deletePart"
+                :disabled="!selected.length"
+            >
+                <DeleteImg />
+            </button>
         </div>
         <div class="view_buttons">
-            <button class="toolbar-btn" v-on:click="loadReferenceImage"><PictureImg /></button>
+            <button class="toolbar-btn" v-on:click="loadReferenceImage">
+                <PictureImg />
+            </button>
             <button class="toolbar-btn" disabled><OpacityImg /></button>
             <button class="toolbar-btn" disabled><CubeImg /></button>
             <button class="toolbar-btn" disabled><SquareImg /></button>
@@ -37,7 +53,7 @@ import ZoominImg from './../assets/zoomin.svg'
 import BotImg from './../assets/bot.svg'
 import SettingImg from './../assets/setting.svg'
 
-import {searchFile} from '@/js/File'
+import { searchFile } from '@/js/File'
 
 export default {
     name: 'ToolBar',
@@ -60,35 +76,35 @@ export default {
         selected() {
             return this.$store.getters.selected
         },
-        undoEmpty(){
+        undoEmpty() {
             return !this.$store.state.symbolart.undoStack.length
         },
-        redoEmpty(){
+        redoEmpty() {
             return !this.$store.state.symbolart.redoStack.length
-        }
+        },
     },
     methods: {
         // edit methods
         addLayer() {
             const selectedId = this.selected[0]
             const partInfo = this.$store.getters.partInfo(selectedId)
-            const parent = partInfo && partInfo.parentId || 0
-            const index = partInfo && partInfo.index || 0
+            const parent = (partInfo && partInfo.parentId) || 0
+            const index = (partInfo && partInfo.index) || 0
             this.$store.commit('addLayer', { parent, index })
         },
         addGroup() {
             const selectedId = this.selected[0]
             const partInfo = this.$store.getters.partInfo(selectedId)
-            const parent = partInfo && partInfo.parentId || 0
-            const index = partInfo && partInfo.index || 0
+            const parent = (partInfo && partInfo.parentId) || 0
+            const index = (partInfo && partInfo.index) || 0
             this.$store.commit('addGroup', { parent, index })
         },
         deletePart() {
             if (this.selected.length === 1) {
                 const selectedId = this.selected[0]
                 const partInfo = this.$store.getters.partInfo(selectedId)
-                const parent = partInfo && partInfo.parentId || 0
-                const index = partInfo && partInfo.index || 0
+                const parent = (partInfo && partInfo.parentId) || 0
+                const index = (partInfo && partInfo.index) || 0
                 this.$store.commit('deletePart', { parent, index })
             }
         },
@@ -100,8 +116,8 @@ export default {
         },
         //View methods
         loadReferenceImage() {
-            searchFile((file)=>this.$store.dispatch('loadReferenceImage', file))
-        }
+            searchFile(file => this.$store.dispatch('loadReferenceImage', file))
+        },
     },
 }
 </script>
@@ -141,10 +157,10 @@ export default {
 .toolbar-btn:focus {
     outline: 0;
 }
-.toolbar-btn:enabled:active{
+.toolbar-btn:enabled:active {
     transform: scale(1.1);
 }
-.toolbar-btn:disabled{
+.toolbar-btn:disabled {
     opacity: 0.2;
 }
 </style>

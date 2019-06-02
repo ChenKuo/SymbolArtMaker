@@ -1,12 +1,13 @@
 <template>
     <div id="sa-title">
-        <NameInput v-if="editingName" 
+        <NameInput
+            v-if="editingName"
             :value="name"
             :id="id"
-            v-on:finished="editingName=false"
-            class="name" 
+            v-on:finished="editingName = false"
+            class="name"
         />
-        <div v-else v-on:click="editingName=true" class="name">
+        <div v-else v-on:click="editingName = true" class="name">
             {{ name }}
         </div>
     </div>
@@ -16,20 +17,20 @@
 import NameInput from '@/components/partsList/NameInput.vue'
 export default {
     name: 'SymbolArtTitle',
-    components:{
-        NameInput
+    components: {
+        NameInput,
     },
-    data(){
+    data() {
         return {
             editingName: false,
             id: 0,
         }
     },
-    computed:{
-        name(){
+    computed: {
+        name() {
             return this.$store.state.symbolart.parts[this.id].name
-        }
-    }
+        },
+    },
 }
 </script>
 
@@ -37,13 +38,11 @@ export default {
 #sa-title {
     justify-content: center;
 }
-
 </style>
 
 <style scoped>
-.name{
+.name {
     width: 100%;
     height: 100%;
 }
 </style>
-

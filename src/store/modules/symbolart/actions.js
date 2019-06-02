@@ -8,7 +8,7 @@ const actions = {
         const reader = new FileReader()
         reader.onload = () => commit('setReferenceImage', reader.result)
         reader.readAsDataURL(file)
-    }
+    },
 }
 
 export default actions
