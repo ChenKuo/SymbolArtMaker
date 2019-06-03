@@ -81,10 +81,6 @@ export default {
             const layerIndexOf = this.$store.getters.layerIndexOf
             for (let i in layersToUpdate) {
                 let l = this.$store.state.symbolart.parts[i]
-                if (!l) {
-                    console.log('parts has no ' + l)
-                    break
-                }
                 let flag = layersToUpdate[i]
                 let index = lastIndex - layerIndexOf[i]
                 flags |= flag
