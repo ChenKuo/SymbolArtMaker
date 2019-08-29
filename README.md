@@ -1,6 +1,10 @@
 # symbolartmaker
 
+<<<<<<< HEAD
 https://chenkuo.github.io/SA/
+=======
+https://chenkuo.github.io/SymbolArtMaker/
+>>>>>>> 749702f4da39924c529ff69d9b62ed257baac013
 
 ## Project setup
 ```
