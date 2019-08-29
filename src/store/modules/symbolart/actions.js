@@ -11,7 +11,7 @@ const actions = {
     },
     fetchSaml({ commit }, url) {
         const xhttp = new XMLHttpRequest()
-        xhttp.onreadystatechange = function(){
+        xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 const sa = samlToSA(this.responseText)
                 commit('setSymbolArt', sa)
@@ -19,7 +19,7 @@ const actions = {
         }
         xhttp.open('GET', url, true)
         xhttp.send()
-    }
+    },
 }
 
 export default actions

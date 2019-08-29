@@ -10,4 +10,12 @@ module.exports = {
         svgRule.uses.clear()
         svgRule.use('vue-svg-loader').loader('vue-svg-loader')
     },
+
+    baseUrl: './',
+    outputDir: undefined,
+    assetsDir: undefined,
+    runtimeCompiler: undefined,
+    productionSourceMap: undefined,
+    parallel: undefined,
+    css: undefined
 }
