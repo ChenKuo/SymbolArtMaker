@@ -96,7 +96,7 @@ const convertType = t => {
     return 0
 }
 
-export { loadSaml }
+export { loadSaml, samlToSA }
 export default loadSaml
 
 /// an example of how a json parsed from saml look ///

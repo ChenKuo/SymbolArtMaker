@@ -17,7 +17,7 @@ export default {
                     value: 'File',
                     options: [
                         { value: 'Import from', options: ['.saml file'] },
-                        'more will be added',
+                        'example.saml',
                     ],
                 },
                 {
@@ -48,6 +48,10 @@ export default {
                     x.click()
                     x.onchange = () =>
                         this.$store.dispatch('loadSamlFile', x.files[0])
+                    break
+                }
+                case 'File/example.saml': {
+                    this.$store.dispatch('fetchSaml', 'example/test.saml')
                     break
                 }
             }
