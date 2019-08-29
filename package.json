@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "core-js": "^2.6.5",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "sortablejs": "github:sortablejs/sortable#next-version",
     "vue": "^2.6.10",
     "vue-color-picker-wheel": "^0.4.3",
